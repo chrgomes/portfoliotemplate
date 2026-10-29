@@ -255,9 +255,42 @@
     });
   }
 
+  /* ---------- Spam check (proof of work, self-hosted) ----------
+   * contact.php hands out a signed challenge; the browser finds the number that produces
+   * the challenge hash. Cheap for one visitor, costly for a bot sending thousands.
+   * Same logic as src/lib/proof-of-work.ts; payload format matches ALTCHA. */
+  function sha256Hex(text) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+    });
+  }
+  async function solveChallenge(url) {
+    if (!window.crypto || !crypto.subtle) throw new Error('The spam check needs a secure (https) connection.');
+    var res = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+    if (!res.ok) throw new Error('The spam check couldn’t start. Reload the page and try again.');
+    var ch = await res.json();
+    for (var n = 0; n <= ch.maxnumber; n++) {
+      if ((await sha256Hex(ch.salt + n)) === ch.challenge) {
+        return btoa(JSON.stringify({ algorithm: ch.algorithm, challenge: ch.challenge, number: n, salt: ch.salt, signature: ch.signature }));
+      }
+    }
+    throw new Error('The spam check couldn’t finish. Reload the page and try again.');
+  }
+
   /* ---------- Contact form ---------- */
   var form = $('[data-contact-form]');
   if (form) {
+    // Start the spam check when the visitor first touches the form, so it's ready by the time they send.
+    var challengeUrl = form.getAttribute('data-challenge');
+    var proof = null;
+    var startProof = function () {
+      if (challengeUrl && !proof) {
+        proof = solveChallenge(challengeUrl);
+        proof.catch(function () {}); // reported on submit
+      }
+      return proof;
+    };
+    form.addEventListener('focusin', startProof);
     var started = form.querySelector('[name="started"]');
     if (started) started.value = String(Date.now());
     var status = $('.form-status', form);
@@ -299,7 +332,13 @@
       label.textContent = 'Sending…';
       status.className = 'form-status';
       status.textContent = '';
-      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+      (challengeUrl ? startProof() : Promise.resolve(''))
+        .then(function (payload) {
+          form.elements.altcha.value = payload;
+          return fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+        }, function (err) {
+          return Promise.reject({ spamCheck: err });
+        })
         .then(function (res) {
           return res.json().catch(function () { return {}; }).then(function (data) { return { res: res, data: data }; });
         })
@@ -314,11 +353,16 @@
             status.textContent = (r.data && r.data.error) || 'The message couldn’t be sent. Try again, or email me directly.';
           }
         })
-        .catch(function () {
+        .catch(function (err) {
           status.className = 'form-status is-error';
-          status.textContent = 'The message couldn’t be sent — check your connection and try again.';
+          status.textContent = err && err.spamCheck
+            ? err.spamCheck.message
+            : 'The message couldn’t be sent — check your connection and try again.';
         })
         .then(function () {
+          // Every challenge works once: get a fresh one for the next attempt.
+          proof = null;
+          form.elements.altcha.value = '';
           submit.disabled = false;
           spinner.remove();
           label.textContent = 'Send message';

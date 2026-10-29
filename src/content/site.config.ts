@@ -25,6 +25,7 @@ export const site: SiteConfig = {
     linkedin: null, // e.g. 'https://www.linkedin.com/in/your-handle'
     resume: null, // e.g. '/files/resume.pdf' (put the PDF in public/files/)
     formEndpoint: '/contact.php',
+    challengeEndpoint: '/contact.php?action=challenge',
   },
 };
 

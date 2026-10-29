@@ -54,6 +54,11 @@ export interface SiteConfig {
      * A Formspree/Web3Forms URL also works. null removes the form.
      */
     formEndpoint: string | null;
+    /**
+     * Where the browser gets its spam-check challenge. "/contact.php?action=challenge" uses
+     * the self-hosted check in contact.php. Set to null if formEndpoint is an outside service.
+     */
+    challengeEndpoint: string | null;
   };
 }
 

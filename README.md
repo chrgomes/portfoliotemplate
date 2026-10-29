@@ -126,18 +126,44 @@ never downloadable.
 2. In cPanel → **File Manager**, go to your home folder (the one that *contains* `public_html`)
    and create a folder named `portfolio-private`.
 3. Upload `hosting/godaddy/contact-config.example.php` into it, rename it to `contact-config.php`, and fill in:
-   `to_email`, `from_email`, `site_name`, `allowed_origins` (your https domain, with and without www), and a random `salt`.
-4. Send yourself a test message from the live site. If nothing arrives within a few minutes,
+   `to_email`, `from_email`, `site_name`, `allowed_origins` (your https domain, with and without www),
+   a random `salt`, and a separate random `challenge_key` of at least 32 characters.
+4. In cPanel → **Select PHP Version**, make sure the domain uses PHP 8.0 or newer.
+5. Send yourself a test message from the live site. If nothing arrives within a few minutes,
    check spam, then cPanel → **Errors** for lines starting `contact.php:`.
 
-What it does: accepts POST only, checks the request came from your site, drops bots silently
-(hidden honeypot field and a minimum fill time), validates every field on the server, strips
-line breaks that could inject email headers, limits each visitor to 5 messages an hour (IP
-addresses are stored only as salted hashes), and stores nothing else.
+### Spam protection
 
-**Prefer not to use PHP?** Set `contact.formEndpoint` to a Formspree or Web3Forms URL (and add
-that domain to `connect-src` and `form-action` in `.htaccess`), or set it to `null` to show
-only the email and profile buttons.
+Everything runs on your own hosting — no Cloudflare, Google or other outside service, and no
+tracking of visitors. Layers, cheapest first:
+
+| Layer | What it stops | What the visitor sees |
+|---|---|---|
+| Same-site check | Posts from other websites | Nothing |
+| Hidden trap field + 2-second minimum | Basic bots | Nothing (bots get a fake "sent") |
+| **Spam check (proof of work)** | Bots that post straight to `contact.php`, or send in bulk | Nothing — it runs in the background while they type |
+| Signed, one-time, 30-minute challenges | Replaying or forging a solved check | "Reload the page" only if they leave the form open for 30+ minutes |
+| Link limit, no links in names | Link spam | A clear message saying what to change |
+| Spam phrases, repeated messages | Ad spam from humans | Nothing (dropped quietly) |
+| 5 messages per visitor per hour | Floods | A message to try later |
+
+**How the spam check works:** when someone first clicks into the form, their browser asks
+`contact.php?action=challenge` for a puzzle signed with your `challenge_key`, and works out the
+answer in the background (a fraction of a second on most devices). The answer is sent with the
+message, and `contact.php` checks the signature, the answer, the expiry, and that the puzzle
+hasn't been used before. One message costs a visitor almost nothing; thousands cost a spammer a
+lot. The format is the same as [ALTCHA](https://altcha.org), an open-source (MIT) project, so its
+official widget can be dropped in later without changing `contact.php`.
+
+**Tuning** (all in `contact-config.php`): raise `challenge_difficulty` if spam still gets through,
+change `max_links`, or edit the `spam_phrases` list. Messages dropped by the phrase or
+repeat filters are saved to `portfolio-private/contact-data/filtered.log`, so check it now and
+then for anything real that was caught by mistake. Nothing else about visitors is stored; IP
+addresses appear only as salted hashes in the rate-limit files.
+
+**Prefer not to use PHP?** Set `contact.formEndpoint` to a Formspree or Web3Forms URL and
+`contact.challengeEndpoint` to `null` (and add that domain to `connect-src` and `form-action` in
+`.htaccess`), or set `formEndpoint` to `null` to show only the email and profile buttons.
 
 ---
 

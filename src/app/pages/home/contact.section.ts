@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators, type AbstractControl } fr
 import { site, copy } from '../../../content/site.config';
 import { IconComponent } from '../../shared/icon.component';
 import { RevealDirective } from '../../shared/reveal.directive';
+import { solveChallenge } from '../../../lib/proof-of-work';
 
 type FormState = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -39,7 +40,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         </div>
 
         @if (c.formEndpoint) {
-          <form class="contact-form" [formGroup]="form" (ngSubmit)="submit()" novalidate pfReveal>
+          <form class="contact-form" [formGroup]="form" (ngSubmit)="submit()" (focusin)="startProof()" novalidate pfReveal>
             <h3>Send a message</h3>
             <div class="field">
               <label for="cf-name">Name</label>
@@ -72,7 +73,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
             </button>
             <p class="form-status" role="status" aria-live="polite"
                [class.is-success]="state() === 'sent'" [class.is-error]="state() === 'error'">{{ status() }}</p>
-            <p class="form-note">Your details are used only to reply to you.</p>
+            <p class="form-note">Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.</p>
           </form>
         }
       </div>
@@ -90,6 +91,8 @@ export class ContactSection {
 
   private readonly http = inject(HttpClient);
   private started = 0;
+  /** The solved spam-check payload, started when the visitor first focuses the form. */
+  private proof: Promise<string> | null = null;
 
   protected readonly form = inject(FormBuilder).nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(100)]],
@@ -120,7 +123,16 @@ export class ContactSection {
     ) ?? done('Press Ctrl+C to copy');
   }
 
-  protected submit(): void {
+  protected startProof(): Promise<string> | null {
+    const url = this.c.challengeEndpoint;
+    if (url && !this.proof) {
+      this.proof = solveChallenge(url);
+      this.proof.catch(() => undefined); // reported on submit
+    }
+    return this.proof;
+  }
+
+  protected async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.state.set('error');
@@ -138,6 +150,15 @@ export class ContactSection {
 
     this.state.set('sending');
     this.status.set('');
+    try {
+      body.set('altcha', (await this.startProof()) ?? '');
+    } catch (err) {
+      this.proof = null;
+      this.fail((err as Error).message);
+      return;
+    }
+    // Every challenge works once: the next attempt gets a fresh one.
+    this.proof = null;
     this.http
       .post<{ ok: boolean; error?: string }>(this.c.formEndpoint!, body, { headers: { Accept: 'application/json' } })
       .subscribe({

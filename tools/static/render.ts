@@ -339,7 +339,7 @@ function contact(o: RenderOptions): string {
   ].join('\n');
 
   const form = c.formEndpoint
-    ? `<form class="contact-form reveal" action="${esc(c.formEndpoint.startsWith('/') ? link(o, c.formEndpoint) : c.formEndpoint)}" method="post" novalidate data-contact-form${o.preview ? ' data-preview' : ''}>
+    ? `<form class="contact-form reveal" action="${esc(c.formEndpoint.startsWith('/') ? link(o, c.formEndpoint) : c.formEndpoint)}" method="post" novalidate data-contact-form${o.preview ? ' data-preview' : ''}${!o.preview && c.challengeEndpoint ? ` data-challenge="${esc(c.challengeEndpoint.startsWith('/') ? link(o, c.challengeEndpoint) : c.challengeEndpoint)}"` : ''}>
   <h3>Send a message</h3>
   <div class="field">
     <label for="cf-name">Name</label>
@@ -358,9 +358,10 @@ function contact(o: RenderOptions): string {
   </div>
   <div class="hp" aria-hidden="true"><label for="cf-website">Leave this empty</label><input id="cf-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
   <input type="hidden" name="started" value="">
+  <input type="hidden" name="altcha" value="">
   <button class="btn btn--primary" type="submit"${o.preview ? ' disabled' : ''}>${ic('send')}<span>Send message</span></button>
   <p class="form-status" role="status" aria-live="polite"></p>
-  <p class="form-note">${o.preview ? 'Preview only: the form sends through contact.php once the site is on your GoDaddy hosting.' : 'Your details are used only to reply to you.'}</p>
+  <p class="form-note">${o.preview ? 'Preview only: the form sends through contact.php once the site is on your GoDaddy hosting.' : 'Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.'}</p>
 </form>`
     : '';
 
