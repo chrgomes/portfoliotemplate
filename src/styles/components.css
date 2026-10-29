@@ -244,6 +244,10 @@
   opacity: 0;
   transform: rotate(-90deg) scale(0.6);
 }
+/* Without JavaScript the toggle can't work, so don't show it. */
+:root:not([data-theme]) .theme-toggle {
+  display: none;
+}
 .nav-actions {
   display: flex;
   align-items: center;

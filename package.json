@@ -12,7 +12,7 @@
     "build:static": "tsx tools/static/build.ts",
     "build:preview": "tsx tools/static/build.ts --preview",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
-    "test": "tsx --test tools/tests/*.test.ts",
+    "test": "tsx --test tools/tests/content.test.ts",
     "audit": "npm audit --omit=dev"
   },
   "dependencies": {

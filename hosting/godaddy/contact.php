@@ -51,7 +51,7 @@ function with_state(string $file, int $now, callable $update)
 {
     $fh = @fopen($file, 'c+');
     if (!$fh) {
-        return $update([]);
+        return $update([])[0];
     }
     flock($fh, LOCK_EX);
     $raw = stream_get_contents($fh);
@@ -125,9 +125,16 @@ if ($method !== 'POST') {
     respond(405, false, 'Use the form on the contact section to send a message.', $wantsJson);
 }
 
+/** A posted field as a string; anything else (e.g. name[]=x) counts as empty. */
+function field(string $key): string
+{
+    $v = $_POST[$key] ?? '';
+    return is_string($v) ? $v : '';
+}
+
 // ---- Bot checks (fail silently so bots learn nothing) -------------------------------
-$honeypot = trim((string)($_POST['website'] ?? ''));
-$started = (int)($_POST['started'] ?? 0);
+$honeypot = trim(field('website'));
+$started = (int)field('started');
 $elapsedMs = $started > 0 ? (int)(microtime(true) * 1000) - $started : null;
 if ($honeypot !== '' || ($elapsedMs !== null && $elapsedMs >= 0 && $elapsedMs < 2000)) {
     respond(200, true, 'Message sent.', $wantsJson);
@@ -135,9 +142,9 @@ if ($honeypot !== '' || ($elapsedMs !== null && $elapsedMs >= 0 && $elapsedMs < 
 
 // ---- Validation -----------------------------------------------------------------
 $clean = static fn(string $s): string => trim(str_replace(["\r", "\n", "\0"], ' ', $s));
-$name = $clean((string)($_POST['name'] ?? ''));
-$email = $clean((string)($_POST['email'] ?? ''));
-$message = trim(str_replace("\0", '', (string)($_POST['message'] ?? '')));
+$name = $clean(field('name'));
+$email = $clean(field('email'));
+$message = trim(str_replace("\0", '', field('message')));
 
 $len = static fn(string $s): int => function_exists('mb_strlen') ? mb_strlen($s, 'UTF-8') : strlen($s);
 if ($len($name) < 2 || $len($name) > 100) {
@@ -151,7 +158,7 @@ if ($len($message) < 10 || $len($message) > 5000) {
 }
 
 // ---- Proof of work ------------------------------------------------------------------
-$solved = json_decode((string)base64_decode((string)($_POST['altcha'] ?? ''), true), true);
+$solved = json_decode((string)base64_decode(field('altcha'), true), true);
 $powOk = is_array($solved)
     && ($solved['algorithm'] ?? '') === 'SHA-256'
     && is_string($solved['challenge'] ?? null)

@@ -191,7 +191,8 @@ mean visitors always get the new version.
 
 ## Design notes
 
-- Dark midnight base with one light section (the approach), a faint column grid behind the page, and Inter / Inter Display self-hosted (no Google Fonts request).
+- Light and dark themes. The site follows the visitor's system setting; the nav toggle switches to the other theme and remembers it until it matches the system again (`public/theme.js`). The approach section is always the inverse of the page. A faint column grid sits behind the page, and Inter / Inter Display are self-hosted (no Google Fonts request).
+- The brand mark is `src/lib/logo.ts`, a vector path. Replace it and run `npm run assets` to update the favicons and social image.
 - The one bold moment is the hero diagram: interface, services and data as stacked layers, requests flowing between them, and an access-check rail beside every layer. It assembles once on load; everything else stays quiet.
 - Motion respects `prefers-reduced-motion`; content is visible without JavaScript and without animation.
 - The pointer ring and card tilt only run on desktop with a fine pointer; the system cursor is never hidden.

@@ -36,9 +36,11 @@
   };
 
   apply();
-  media.addEventListener('change', function () {
+  var onSystemChange = function () {
     if (!saved) apply();
-  });
+  };
+  if (media.addEventListener) media.addEventListener('change', onSystemChange);
+  else if (media.addListener) media.addListener(onSystemChange); // Safari 13 and older
 
   window.portfolioTheme = {
     current: current,
