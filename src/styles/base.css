@@ -1,0 +1,221 @@
+/* =====================================================================
+   Base — reset, typography, layout primitives
+   ===================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--nav-h) + 1rem);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--c-ink-0);
+  color: var(--c-text);
+  font-family: var(--f-body);
+  font-size: var(--t-base);
+  line-height: var(--lh-body);
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure {
+  margin: 0;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--f-display);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+::selection {
+  background: rgba(91, 140, 255, 0.35);
+  color: var(--c-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--c-cyan);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -100px;
+  z-index: 100;
+  padding: var(--s-3) var(--s-4);
+  background: var(--c-text);
+  color: var(--c-ink-0);
+  border-radius: var(--r-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: var(--s-3);
+}
+
+/* ---------- Layout primitives ---------- */
+
+.container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2vw, 2rem);
+}
+
+/* The page's fine column grid — visible structure behind every dark section. */
+.page-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.page-grid .container {
+  height: 100%;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--c-gridline) 0 1px,
+    transparent 1px calc((100% - 1px) / 6)
+  );
+  background-clip: content-box;
+  border-right: 1px solid var(--c-gridline);
+  box-sizing: border-box;
+}
+@media (max-width: 720px) {
+  .page-grid .container {
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--c-gridline) 0 1px,
+      transparent 1px calc((100% - 1px) / 2)
+    );
+  }
+}
+
+main,
+.site-footer {
+  position: relative;
+  z-index: 1;
+}
+
+.section {
+  padding-block: var(--section-y);
+  position: relative;
+}
+
+/* Section heading: large title on the left, lead paragraph set against it. */
+.section-head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2vw, 2rem);
+  row-gap: var(--s-5);
+  align-items: end;
+  margin-bottom: clamp(2.5rem, 2rem + 3vw, 5rem);
+}
+.section-head h2 {
+  grid-column: 1 / span 7;
+  font-size: var(--t-3xl);
+  line-height: var(--lh-tight);
+  letter-spacing: -0.035em;
+}
+.section-head p {
+  grid-column: 9 / span 4;
+  color: var(--c-muted);
+  max-width: 38ch;
+}
+@media (max-width: 900px) {
+  .section-head h2,
+  .section-head p {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Technical text: metadata, tech stacks, timestamps. Sentence case on purpose. */
+.mono {
+  font-family: var(--f-mono);
+  font-size: var(--t-xs);
+  letter-spacing: 0;
+  font-feature-settings: normal;
+}
+
+.muted {
+  color: var(--c-muted);
+}
+
+.prose p + p {
+  margin-top: 1em;
+}
+.prose {
+  max-width: 66ch;
+}

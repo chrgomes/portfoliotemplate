@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-static/
+dist-preview/
+preview-index.html
+.angular/
+out-tsc/
+*.log
+.DS_Store
+# Never commit the real contact form settings.
+contact-config.php
+contact-data/

@@ -1,0 +1,268 @@
+/* =====================================================================
+   Generated SVG visuals — hero system, project previews, diagrams
+   ===================================================================== */
+
+/* ---------- Hero system ---------- */
+
+.hero-system {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.hv-face {
+  fill: rgba(17, 23, 34, 0.82);
+  stroke: var(--c-line-strong);
+  stroke-width: 1;
+  transition: stroke var(--dur-2) ease;
+}
+.hv-face--product { stroke: rgba(91, 140, 255, 0.45); }
+.hv-face--data { stroke: rgba(66, 217, 245, 0.45); }
+.hv-grid {
+  stroke: rgba(154, 165, 181, 0.11);
+  stroke-width: 1;
+}
+.hv-tile {
+  fill: rgba(154, 165, 181, 0.06);
+  stroke: rgba(154, 165, 181, 0.28);
+  stroke-width: 1;
+}
+.hv-tile--product {
+  fill: rgba(91, 140, 255, 0.2);
+  stroke: var(--c-blue);
+}
+.hv-edge {
+  stroke: rgba(91, 140, 255, 0.5);
+  stroke-width: 1;
+}
+.hv-node {
+  fill: var(--c-ink-0);
+  stroke: var(--c-muted);
+  stroke-width: 1.2;
+}
+.hv-node--product {
+  fill: var(--c-blue);
+  stroke: var(--c-blue);
+}
+.hv-row {
+  fill: rgba(66, 217, 245, 0.05);
+  stroke: rgba(66, 217, 245, 0.3);
+  stroke-width: 1;
+}
+.hv-row--data {
+  fill: rgba(66, 217, 245, 0.2);
+  stroke: var(--c-cyan);
+}
+.hv-link {
+  stroke: rgba(91, 140, 255, 0.55);
+  stroke-width: 1;
+  stroke-dasharray: 3 5;
+}
+.hv-link--data {
+  stroke: rgba(66, 217, 245, 0.55);
+}
+.hv-packet {
+  fill: var(--c-blue);
+  opacity: 0;
+}
+.hv-packet--data {
+  fill: var(--c-cyan);
+}
+.hv-label {
+  fill: var(--c-muted);
+  font-family: var(--f-mono);
+  font-size: 14px;
+}
+.hv-label--tech {
+  fill: var(--c-text);
+}
+.hv-label--security {
+  fill: var(--c-violet);
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .hv-label { font-size: 19px; }
+  .hv-label--security { font-size: 17px; }
+}
+.hv-leader {
+  stroke: var(--c-line-strong);
+  stroke-width: 1;
+}
+.hv-rail-line {
+  stroke: var(--c-violet);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 4;
+}
+.hv-gate-line {
+  stroke: rgba(139, 124, 255, 0.45);
+  stroke-width: 1;
+}
+.hv-gate-mark {
+  fill: var(--c-ink-0);
+  stroke: var(--c-violet);
+  stroke-width: 1.4;
+}
+.hv-plane {
+  translate: calc(var(--px, 0) * var(--k, 0) * 1px) calc(var(--py, 0) * var(--k, 0) * 0.6px);
+  transition: translate 600ms var(--ease-out);
+}
+.hv-plane--0 { --k: 14; }
+.hv-plane--1 { --k: 7; }
+.hv-plane--2 { --k: 0; }
+.hv-plane:hover .hv-face {
+  stroke: var(--c-text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hv-plane {
+    animation: hv-assemble 1100ms var(--ease-out) both;
+  }
+  .hv-plane--0 { animation-delay: 360ms; }
+  .hv-plane--1 { animation-delay: 180ms; }
+  .hv-plane--2 { animation-delay: 0ms; }
+  .hv-flows,
+  .hv-rail {
+    animation: hv-fade 900ms ease 1100ms both;
+  }
+  .hv-packet {
+    animation: hv-drop 2.8s linear infinite;
+  }
+  .hv-packet--d0 { animation-delay: 1.4s; }
+  .hv-packet--d1 { animation-delay: 2.1s; }
+  .hv-packet--d2 { animation-delay: 2.9s; }
+  .hv-packet--d3 { animation-delay: 3.6s; }
+  .hv-packet--d4 { animation-delay: 4.3s; }
+}
+
+@keyframes hv-assemble {
+  from {
+    opacity: 0;
+    transform: translateY(-36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes hv-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes hv-drop {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(150px); opacity: 0; }
+}
+
+/* ---------- Project previews ---------- */
+
+.pv {
+  overflow: visible;
+}
+.pv text {
+  font-family: var(--f-mono);
+}
+.pv-window { fill: var(--c-ink-0); stroke: var(--c-line-strong); stroke-width: 1; }
+.pv-rule { stroke: var(--c-line); stroke-width: 1; }
+.pv-title { fill: var(--c-muted); font-size: 13px; }
+.pv-chip { fill: none; stroke: var(--c-line-strong); stroke-width: 1; }
+.pv-panel { fill: rgba(154, 165, 181, 0.035); stroke: var(--c-line); stroke-width: 1; }
+.pv-panel--data { stroke: rgba(66, 217, 245, 0.4); }
+.pv-panel--security { stroke: rgba(139, 124, 255, 0.45); }
+.pv-ink { fill: rgba(154, 165, 181, 0.2); }
+.pv-ink--strong { fill: rgba(154, 165, 181, 0.45); }
+.pv-ink--product { fill: var(--c-blue); }
+.pv-card { fill: rgba(154, 165, 181, 0.045); stroke: var(--c-line); stroke-width: 1; }
+.pv-card--product { fill: rgba(91, 140, 255, 0.1); stroke: var(--c-blue); }
+.pv-tag { fill: rgba(154, 165, 181, 0.16); }
+.pv-tag--product { fill: rgba(91, 140, 255, 0.6); }
+.pv-tag--data { fill: rgba(66, 217, 245, 0.55); }
+.pv-tag--security { fill: rgba(139, 124, 255, 0.6); }
+.pv-label { fill: var(--c-muted); font-size: 12px; }
+.pv-mono { fill: var(--c-text); font-size: 13px; opacity: 0.85; }
+.pv-cell { fill: rgba(154, 165, 181, 0.03); stroke: rgba(154, 165, 181, 0.09); stroke-width: 1; }
+.pv-fill { fill: rgba(154, 165, 181, 0.18); }
+.pv-fill--product { fill: var(--c-blue); opacity: 0.75; }
+.pv-fill--data { fill: var(--c-cyan); opacity: 0.75; }
+.pv-fill--security { fill: var(--c-violet); opacity: 0.8; }
+.pv-button { fill: none; stroke: var(--c-line-strong); stroke-width: 1; }
+.pv-button--data { fill: var(--c-cyan); stroke: none; opacity: 0.85; }
+.pv-button--product { fill: var(--c-blue); stroke: none; }
+.pv-arrow { fill: none; stroke: var(--c-muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.pv-check { fill: none; stroke: var(--c-cyan); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.pv-check--warn { stroke: var(--c-muted); stroke-dasharray: 2 3; }
+.pv-sev { fill: rgba(154, 165, 181, 0.3); }
+.pv-sev--security { fill: var(--c-violet); }
+.pv-wire { fill: none; stroke: var(--c-line-strong); stroke-width: 1.5; }
+.pv-node { fill: rgba(154, 165, 181, 0.05); stroke: var(--c-line-strong); stroke-width: 1; }
+.pv-node--data { stroke: var(--c-cyan); fill: rgba(66, 217, 245, 0.08); }
+.pv-node--security { stroke: var(--c-violet); fill: rgba(139, 124, 255, 0.08); }
+
+/* ---------- Case-study diagrams ---------- */
+
+.diagram-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: var(--s-2);
+}
+.diagram {
+  width: 100%;
+  min-width: 640px;
+  height: auto;
+}
+.diagram text {
+  font-family: var(--f-body);
+}
+.dg-node { --d: var(--c-blue); }
+.dg-node--data { --d: var(--c-cyan); }
+.dg-node--security { --d: var(--c-violet); }
+.dg-node rect:first-child {
+  fill: var(--c-ink-1);
+  stroke: var(--c-line-strong);
+  stroke-width: 1;
+}
+.dg-tick { fill: var(--d); }
+.dg-title {
+  fill: var(--c-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+.dg-detail {
+  fill: var(--c-muted);
+  font-size: 12.5px;
+}
+.dg-edge path {
+  fill: none;
+  stroke: var(--c-muted);
+  stroke-width: 1.2;
+}
+.dg-edge-label {
+  fill: var(--c-subtle);
+  font-size: 11.5px;
+  font-family: var(--f-mono) !important;
+}
+.dg-arrow { fill: var(--c-muted); }
+.dg-table rect {
+  fill: var(--c-ink-1);
+  stroke: var(--c-line-strong);
+  stroke-width: 1;
+}
+.dg-table-rule { stroke: var(--c-line); }
+.dg-field {
+  fill: var(--c-text);
+  font-size: 13px;
+  font-family: var(--f-mono) !important;
+}
+.dg-key {
+  font-size: 10.5px;
+  font-family: var(--f-mono) !important;
+  fill: var(--c-subtle);
+}
+.dg-key--pk { fill: var(--c-cyan); }
+.dg-key--fk { fill: var(--c-blue); }
+.dg-relation {
+  fill: none;
+  stroke: rgba(66, 217, 245, 0.5);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 3;
+}

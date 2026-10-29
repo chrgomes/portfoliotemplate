@@ -1,0 +1,43 @@
+{
+  "name": "developer-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal developer portfolio — Angular, pre-rendered to static files for GoDaddy hosting.",
+  "scripts": {
+    "start": "ng serve",
+    "seo": "tsx tools/seo-files.ts",
+    "assets": "tsx tools/generate-assets.ts",
+    "prebuild": "npm run seo",
+    "build": "ng build && tsx tools/angular-postbuild.ts",
+    "build:static": "tsx tools/static/build.ts",
+    "build:preview": "tsx tools/static/build.ts --preview",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "test": "tsx --test tools/tests/*.test.ts",
+    "audit": "npm audit --omit=dev"
+  },
+  "dependencies": {
+    "@angular/common": "^20.3.0",
+    "@angular/compiler": "^20.3.0",
+    "@angular/core": "^20.3.0",
+    "@angular/forms": "^20.3.0",
+    "@angular/platform-browser": "^20.3.0",
+    "@angular/platform-server": "^20.3.0",
+    "@angular/router": "^20.3.0",
+    "@angular/ssr": "^20.3.0",
+    "bootstrap": "^5.3.3",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.6.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.3.0",
+    "@angular/cli": "^20.3.0",
+    "@angular/compiler-cli": "^20.3.0",
+    "@types/node": "^20.11.0",
+    "sharp": "^0.33.5",
+    "tsx": "^4.19.0",
+    "typescript": "~5.8.0"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

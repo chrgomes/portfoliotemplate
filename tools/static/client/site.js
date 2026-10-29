@@ -1,0 +1,331 @@
+/*
+ * Progressive enhancement for the static build. Every feature here is optional:
+ * without JavaScript all content is visible and every link works.
+ * The Angular app implements the same behaviours in its components.
+ */
+(function () {
+  'use strict';
+
+  var doc = document;
+  var root = doc.documentElement;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  var $ = function (sel, ctx) { return (ctx || doc).querySelector(sel); };
+  var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || doc).querySelectorAll(sel)); };
+
+  /* ---------- Scroll reveals ---------- */
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    root.classList.add('js-reveal');
+    var revealer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          revealer.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    $$('.reveal').forEach(function (el) {
+      // Anything already on screen is shown immediately — no waiting to read.
+      var r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight) el.classList.add('is-visible');
+      else revealer.observe(el);
+    });
+  }
+
+  /* ---------- Navigation ---------- */
+  var nav = $('#site-nav');
+  var onScroll = function () {
+    if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 8);
+  };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  var toggle = $('.nav-toggle');
+  var sheet = $('#nav-sheet');
+  function setMenu(open) {
+    if (!toggle || !sheet) return;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    sheet.hidden = !open;
+    doc.body.classList.toggle('nav-open', open);
+    if (open) {
+      var first = $('a', sheet);
+      if (first) first.focus();
+    }
+  }
+  if (toggle && sheet) {
+    toggle.addEventListener('click', function () {
+      setMenu(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+    $$('a', sheet).forEach(function (a) {
+      a.addEventListener('click', function () { setMenu(false); });
+    });
+    doc.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setMenu(false);
+        toggle.focus();
+      }
+      // Keep focus inside the open menu.
+      if (e.key === 'Tab' && toggle.getAttribute('aria-expanded') === 'true') {
+        var items = [toggle].concat($$('a', sheet));
+        var i = items.indexOf(doc.activeElement);
+        if (e.shiftKey && i <= 0) { e.preventDefault(); items[items.length - 1].focus(); }
+        else if (!e.shiftKey && i === items.length - 1) { e.preventDefault(); items[0].focus(); }
+      }
+    });
+    window.matchMedia('(min-width: 861px)').addEventListener('change', function (m) {
+      if (m.matches) setMenu(false);
+    });
+  }
+
+  /* ---------- Scroll spy (home nav and case-study contents) ---------- */
+  function spy(links, attr) {
+    if (!links.length || !('IntersectionObserver' in window)) return;
+    var map = {};
+    links.forEach(function (a) { map[a.getAttribute(attr)] = a; });
+    var current = null;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          if (current) current.removeAttribute('aria-current');
+          current = map[e.target.id];
+          if (current) current.setAttribute('aria-current', 'true');
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    Object.keys(map).forEach(function (id) {
+      var el = doc.getElementById(id);
+      if (el) io.observe(el);
+    });
+  }
+  if ($('.hero')) spy($$('[data-spy]'), 'data-spy');
+  spy($$('[data-toc]'), 'data-toc');
+
+  /* ---------- Hero parallax ---------- */
+  var visual = $('[data-parallax]');
+  if (visual && finePointer && !reduceMotion) {
+    var raf = 0;
+    window.addEventListener('pointermove', function (e) {
+      if (raf) return;
+      raf = requestAnimationFrame(function () {
+        raf = 0;
+        visual.style.setProperty('--px', ((e.clientX / window.innerWidth) * 2 - 1).toFixed(3));
+        visual.style.setProperty('--py', ((e.clientY / window.innerHeight) * 2 - 1).toFixed(3));
+      });
+    }, { passive: true });
+  }
+
+  /* ---------- Local clock ---------- */
+  var clock = $('[data-clock]');
+  if (clock) {
+    var out = $('time', clock);
+    try {
+      var fmt = new Intl.DateTimeFormat('en-CA', {
+        hour: '2-digit', minute: '2-digit', hour12: false, timeZone: clock.getAttribute('data-clock'),
+      });
+      var tick = function () { out.textContent = fmt.format(new Date()); };
+      tick();
+      setInterval(tick, 15000);
+    } catch (err) {
+      clock.hidden = true;
+    }
+  }
+
+  /* ---------- Expertise tabs + skill details ---------- */
+  var skills = $('[data-skills]');
+  if (skills) {
+    var tabs = $$('[role="tab"]', skills);
+    var panels = $$('[role="tabpanel"]', skills);
+    var select = function (tab, focus) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(function (p) { p.hidden = p.id !== tab.getAttribute('aria-controls'); });
+      if (focus) tab.focus();
+    };
+    select(tabs[0], false);
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab, false); });
+      tab.addEventListener('keydown', function (e) {
+        var next = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+        if (e.key === 'Home') next = tabs[0];
+        if (e.key === 'End') next = tabs[tabs.length - 1];
+        if (next) { e.preventDefault(); select(next, true); }
+      });
+    });
+
+    $$('.skill', skills).forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var panel = btn.closest('[role="tabpanel"]');
+        $$('.skill', panel).forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
+        var detail = $('.skill-detail', panel);
+        detail.textContent = '';
+        var strong = doc.createElement('strong');
+        strong.textContent = btn.textContent;
+        detail.appendChild(strong);
+        var note = btn.getAttribute('data-note');
+        if (note) {
+          var p = doc.createElement('p');
+          p.textContent = note;
+          detail.appendChild(p);
+        }
+        var used = [];
+        try { used = JSON.parse(btn.getAttribute('data-used') || '[]'); } catch (err) { used = []; }
+        if (used.length) {
+          var u = doc.createElement('p');
+          u.className = 'used mono';
+          u.appendChild(doc.createTextNode('Used in '));
+          used.forEach(function (proj, k) {
+            var a = doc.createElement('a');
+            a.href = proj.href;
+            a.textContent = proj.title;
+            u.appendChild(a);
+            if (k < used.length - 1) u.appendChild(doc.createTextNode(', '));
+          });
+          detail.appendChild(u);
+        }
+      });
+    });
+  }
+
+  /* ---------- Process timeline ---------- */
+  var process = $('[data-process]');
+  if (process) {
+    root.classList.add('js-process');
+    var steps = $$('.step', process);
+    var setStep = function (n) {
+      process.style.setProperty('--active', String(n));
+      steps.forEach(function (s, i) {
+        s.classList.toggle('is-active', i === n);
+        s.classList.toggle('is-done', i < n);
+        $('.step-btn', s).setAttribute('aria-pressed', String(i === n));
+      });
+    };
+    $$('.step-btn', process).forEach(function (b) {
+      var n = Number(b.getAttribute('data-step'));
+      b.addEventListener('click', function () { setStep(n); });
+      if (finePointer) b.addEventListener('mouseenter', function () { setStep(n); });
+    });
+    setStep(0);
+  }
+
+  /* ---------- Copy email ---------- */
+  $$('[data-copy]').forEach(function (btn) {
+    var feedback = btn.parentElement.querySelector('.copy-feedback');
+    btn.addEventListener('click', function () {
+      var text = btn.getAttribute('data-copy');
+      var done = function (ok) {
+        if (feedback) feedback.textContent = ok ? 'Copied' : 'Press Ctrl+C to copy';
+        setTimeout(function () { if (feedback) feedback.textContent = ''; }, 2400);
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+      else done(false);
+    });
+  });
+
+  /* ---------- Pointer follower + card tilt (fine pointers only) ---------- */
+  var ring = $('.cursor-ring');
+  if (ring && finePointer && !reduceMotion) {
+    window.addEventListener('pointermove', function (e) {
+      ring.style.setProperty('--x', e.clientX + 'px');
+      ring.style.setProperty('--y', e.clientY + 'px');
+    }, { passive: true });
+    $$('[data-cursor]').forEach(function (el) {
+      el.addEventListener('pointerenter', function () {
+        ring.textContent = el.getAttribute('data-cursor');
+        ring.classList.add('is-active');
+      });
+      el.addEventListener('pointerleave', function () { ring.classList.remove('is-active'); });
+    });
+    $$('.card .card-media').forEach(function (m) {
+      m.addEventListener('pointermove', function (e) {
+        var r = m.getBoundingClientRect();
+        m.style.setProperty('--rx', (((e.clientX - r.left) / r.width - 0.5) * 6).toFixed(2) + 'deg');
+        m.style.setProperty('--ry', (((e.clientY - r.top) / r.height - 0.5) * -5).toFixed(2) + 'deg');
+      });
+      m.addEventListener('pointerleave', function () {
+        m.style.setProperty('--rx', '0deg');
+        m.style.setProperty('--ry', '0deg');
+      });
+    });
+  }
+
+  /* ---------- Contact form ---------- */
+  var form = $('[data-contact-form]');
+  if (form) {
+    var started = form.querySelector('[name="started"]');
+    if (started) started.value = String(Date.now());
+    var status = $('.form-status', form);
+    var submit = $('button[type="submit"]', form);
+    var label = submit ? $('span', submit) : null;
+    var rules = {
+      name: function (v) { return v.trim().length >= 2 ? '' : 'Enter your name.'; },
+      email: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) ? '' : 'Enter an email address like name@example.com.'; },
+      message: function (v) { return v.trim().length >= 10 ? '' : 'Write a message of at least 10 characters.'; },
+    };
+    var check = function (name) {
+      var input = form.elements[name];
+      var msg = rules[name](input.value);
+      input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+      doc.getElementById(input.id + '-err').textContent = msg;
+      return !msg;
+    };
+    Object.keys(rules).forEach(function (name) {
+      form.elements[name].addEventListener('blur', function () {
+        if (form.elements[name].value) check(name);
+      });
+    });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (form.hasAttribute('data-preview')) return;
+      var ok = Object.keys(rules).map(check).every(Boolean);
+      if (!ok) {
+        var firstBad = form.querySelector('[aria-invalid="true"]');
+        if (firstBad) firstBad.focus();
+        status.className = 'form-status is-error';
+        status.textContent = 'Check the highlighted fields.';
+        return;
+      }
+      submit.disabled = true;
+      var spinner = doc.createElement('span');
+      spinner.className = 'spinner';
+      spinner.setAttribute('aria-hidden', 'true');
+      submit.insertBefore(spinner, submit.firstChild);
+      label.textContent = 'Sending…';
+      status.className = 'form-status';
+      status.textContent = '';
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) { return { res: res, data: data }; });
+        })
+        .then(function (r) {
+          if (r.res.ok && r.data.ok) {
+            form.reset();
+            if (started) started.value = String(Date.now());
+            status.className = 'form-status is-success';
+            status.textContent = 'Message sent. I’ll reply to the email address you gave.';
+          } else {
+            status.className = 'form-status is-error';
+            status.textContent = (r.data && r.data.error) || 'The message couldn’t be sent. Try again, or email me directly.';
+          }
+        })
+        .catch(function () {
+          status.className = 'form-status is-error';
+          status.textContent = 'The message couldn’t be sent — check your connection and try again.';
+        })
+        .then(function () {
+          submit.disabled = false;
+          spinner.remove();
+          label.textContent = 'Send message';
+        });
+    });
+  }
+
+  /* ---------- Year ---------- */
+  $$('[data-year]').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
+})();
