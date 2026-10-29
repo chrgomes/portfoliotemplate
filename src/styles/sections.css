@@ -75,8 +75,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #7fe0a8;
-  box-shadow: 0 0 0 4px rgba(127, 224, 168, 0.15);
+  background: var(--c-good);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--c-good) 18%, transparent);
 }
 
 .hero-visual {
@@ -466,15 +466,11 @@
 /* ---------- Principles (the one light section) ---------- */
 
 .section--paper {
-  background: var(--c-paper);
-  color: var(--c-paper-ink);
-  --c-line: var(--c-paper-line);
-  --c-muted: var(--c-paper-muted);
-  color-scheme: light;
+  /* The one inverted section: light on the dark theme, dark on the light theme (see tokens.css). */
+  background: var(--c-ink-0);
+  color: var(--c-text);
 }
-.section--paper :focus-visible {
-  outline-color: var(--c-blue-on-paper);
-}
+
 .principles {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -484,7 +480,7 @@
   padding: 0;
 }
 .principle {
-  border-top: 1px solid var(--c-paper-ink);
+  border-top: 1px solid var(--c-text);
   padding-top: var(--s-5);
   display: grid;
   grid-template-rows: auto auto 1fr;
@@ -496,7 +492,7 @@
   align-items: flex-start;
 }
 .principle-head .mono {
-  color: var(--c-paper-muted);
+  color: var(--c-muted);
 }
 .principle h3 {
   font-size: var(--t-xl);
@@ -504,25 +500,25 @@
   max-width: 14ch;
 }
 .principle p {
-  color: var(--c-paper-muted);
+  color: var(--c-muted);
 }
 .glyph {
   width: 56px;
   height: 56px;
   fill: none;
-  stroke: var(--c-paper-ink);
+  stroke: var(--c-text);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 .glyph .gl-accent {
-  stroke: var(--c-blue-on-paper);
+  stroke: var(--c-blue);
 }
 .glyph--secure .gl-accent {
-  stroke: var(--c-violet-on-paper);
+  stroke: var(--c-violet);
 }
 .glyph .gl-dot {
-  fill: var(--c-blue-on-paper);
+  fill: var(--c-blue);
   stroke: none;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -831,10 +827,10 @@
   border-color: transparent;
 }
 .field [aria-invalid='true'] {
-  border-color: #ff8a8a;
+  border-color: var(--c-bad);
 }
 .field-error {
-  color: #ff9b9b;
+  color: var(--c-bad);
   font-size: var(--t-xs);
 }
 .hp {
@@ -849,10 +845,10 @@
   min-height: 1.5em;
 }
 .form-status.is-success {
-  color: #7fe0a8;
+  color: var(--c-good);
 }
 .form-status.is-error {
-  color: #ff9b9b;
+  color: var(--c-bad);
 }
 .form-note {
   color: var(--c-subtle);

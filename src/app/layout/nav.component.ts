@@ -14,6 +14,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { displayName, initials } from '../../lib/helpers';
 import { monogram } from '../../lib/visuals';
 import { SvgComponent } from '../shared/svg.component';
+import { IconComponent } from '../shared/icon.component';
+
+/** Provided by public/theme.js, which runs before Angular starts. */
+interface PortfolioTheme {
+  current(): 'light' | 'dark';
+  toggle(): 'light' | 'dark';
+  onChange(fn: (theme: 'light' | 'dark', followsSystem: boolean) => void): void;
+}
+declare global {
+  interface Window {
+    portfolioTheme?: PortfolioTheme;
+  }
+}
 
 interface NavItem {
   id: string;
@@ -22,7 +35,7 @@ interface NavItem {
 
 @Component({
   selector: 'pf-nav',
-  imports: [RouterLink, SvgComponent],
+  imports: [RouterLink, SvgComponent, IconComponent],
   template: `
     <header class="site-nav" [class.is-scrolled]="scrolled()">
       <div class="container">
@@ -38,6 +51,10 @@ interface NavItem {
             }
           </ul>
         </nav>
+        <div class="nav-actions">
+        <button class="theme-toggle" type="button" [attr.aria-label]="themeLabel()" [title]="themeTitle()" (click)="toggleTheme()">
+          <pf-icon name="sun" /><pf-icon name="moon" />
+        </button>
         <a class="btn btn--primary nav-cta" routerLink="/" fragment="contact">Let’s talk</a>
         <button
           #toggle
@@ -50,6 +67,7 @@ interface NavItem {
         >
           <span></span><span></span>
         </button>
+        </div>
       </div>
       <div #sheet class="nav-sheet" id="nav-sheet" [hidden]="!open()" (keydown)="trapFocus($event)">
         <nav aria-label="Mobile">
@@ -85,6 +103,8 @@ export class NavComponent {
   ];
 
   protected readonly scrolled = signal(false);
+  protected readonly themeLabel = signal('Switch to light mode');
+  protected readonly themeTitle = signal('Switch to light mode');
   protected readonly open = signal(false);
   protected readonly active = signal<string | null>(null);
 
@@ -96,6 +116,11 @@ export class NavComponent {
 
   constructor() {
     afterNextRender(() => {
+      window.portfolioTheme?.onChange((theme, followsSystem) => {
+        const label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+        this.themeLabel.set(label);
+        this.themeTitle.set(label + (followsSystem ? ' (now matching your system setting)' : ''));
+      });
       this.onScroll();
       this.watchSections();
       this.router.events
@@ -112,6 +137,10 @@ export class NavComponent {
         this.spy?.disconnect();
       });
     });
+  }
+
+  protected toggleTheme(): void {
+    window.portfolioTheme?.toggle();
   }
 
   protected onScroll(): void {

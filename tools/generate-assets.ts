@@ -39,8 +39,11 @@ function heroCss(): string {
   const css = readFileSync(join(repo, 'src/styles/visuals.css'), 'utf8');
   const start = css.indexOf('.hv-face');
   const end = css.indexOf('.hv-plane {');
+  const RGB: Record<string, string> = { gray: '154,165,181', blue: '91,140,255', cyan: '66,217,245', violet: '139,124,255', text: '244,246,250' };
   return css
     .slice(start, end)
+    .replace(/rgb\(var\(--c-(\w+)-rgb\) \/ ([0-9.]+)\)/g, (_, c: string, a: string) => `rgba(${RGB[c] ?? '136,136,136'},${a})`)
+    .replace(/color-mix\(in srgb, var\(--c-surface\) (\d+)%, transparent\)/g, (_, p: string) => `rgba(17,23,34,${Number(p) / 100})`)
     .replace(/var\((--[\w-]+)\)/g, (_, v: string) => COLORS[v] ?? '#888')
     .replace(/\.hv-packet\s*\{[^}]*\}/, '.hv-packet{opacity:0}');
 }

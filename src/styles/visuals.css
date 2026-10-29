@@ -10,28 +10,28 @@
   overflow: visible;
 }
 .hv-face {
-  fill: rgba(17, 23, 34, 0.82);
+  fill: color-mix(in srgb, var(--c-surface) 82%, transparent);
   stroke: var(--c-line-strong);
   stroke-width: 1;
   transition: stroke var(--dur-2) ease;
 }
-.hv-face--product { stroke: rgba(91, 140, 255, 0.45); }
-.hv-face--data { stroke: rgba(66, 217, 245, 0.45); }
+.hv-face--product { stroke: rgb(var(--c-blue-rgb) / 0.45); }
+.hv-face--data { stroke: rgb(var(--c-cyan-rgb) / 0.45); }
 .hv-grid {
-  stroke: rgba(154, 165, 181, 0.11);
+  stroke: rgb(var(--c-gray-rgb) / 0.11);
   stroke-width: 1;
 }
 .hv-tile {
-  fill: rgba(154, 165, 181, 0.06);
-  stroke: rgba(154, 165, 181, 0.28);
+  fill: rgb(var(--c-gray-rgb) / 0.06);
+  stroke: rgb(var(--c-gray-rgb) / 0.28);
   stroke-width: 1;
 }
 .hv-tile--product {
-  fill: rgba(91, 140, 255, 0.2);
+  fill: rgb(var(--c-blue-rgb) / 0.2);
   stroke: var(--c-blue);
 }
 .hv-edge {
-  stroke: rgba(91, 140, 255, 0.5);
+  stroke: rgb(var(--c-blue-rgb) / 0.5);
   stroke-width: 1;
 }
 .hv-node {
@@ -44,21 +44,21 @@
   stroke: var(--c-blue);
 }
 .hv-row {
-  fill: rgba(66, 217, 245, 0.05);
-  stroke: rgba(66, 217, 245, 0.3);
+  fill: rgb(var(--c-cyan-rgb) / 0.05);
+  stroke: rgb(var(--c-cyan-rgb) / 0.3);
   stroke-width: 1;
 }
 .hv-row--data {
-  fill: rgba(66, 217, 245, 0.2);
+  fill: rgb(var(--c-cyan-rgb) / 0.2);
   stroke: var(--c-cyan);
 }
 .hv-link {
-  stroke: rgba(91, 140, 255, 0.55);
+  stroke: rgb(var(--c-blue-rgb) / 0.55);
   stroke-width: 1;
   stroke-dasharray: 3 5;
 }
 .hv-link--data {
-  stroke: rgba(66, 217, 245, 0.55);
+  stroke: rgb(var(--c-cyan-rgb) / 0.55);
 }
 .hv-packet {
   fill: var(--c-blue);
@@ -93,7 +93,7 @@
   stroke-dasharray: 2 4;
 }
 .hv-gate-line {
-  stroke: rgba(139, 124, 255, 0.45);
+  stroke: rgb(var(--c-violet-rgb) / 0.45);
   stroke-width: 1;
 }
 .hv-gate-mark {
@@ -166,22 +166,22 @@
 .pv-rule { stroke: var(--c-line); stroke-width: 1; }
 .pv-title { fill: var(--c-muted); font-size: 13px; }
 .pv-chip { fill: none; stroke: var(--c-line-strong); stroke-width: 1; }
-.pv-panel { fill: rgba(154, 165, 181, 0.035); stroke: var(--c-line); stroke-width: 1; }
-.pv-panel--data { stroke: rgba(66, 217, 245, 0.4); }
-.pv-panel--security { stroke: rgba(139, 124, 255, 0.45); }
-.pv-ink { fill: rgba(154, 165, 181, 0.2); }
-.pv-ink--strong { fill: rgba(154, 165, 181, 0.45); }
+.pv-panel { fill: rgb(var(--c-gray-rgb) / 0.035); stroke: var(--c-line); stroke-width: 1; }
+.pv-panel--data { stroke: rgb(var(--c-cyan-rgb) / 0.4); }
+.pv-panel--security { stroke: rgb(var(--c-violet-rgb) / 0.45); }
+.pv-ink { fill: rgb(var(--c-gray-rgb) / 0.2); }
+.pv-ink--strong { fill: rgb(var(--c-gray-rgb) / 0.45); }
 .pv-ink--product { fill: var(--c-blue); }
-.pv-card { fill: rgba(154, 165, 181, 0.045); stroke: var(--c-line); stroke-width: 1; }
-.pv-card--product { fill: rgba(91, 140, 255, 0.1); stroke: var(--c-blue); }
-.pv-tag { fill: rgba(154, 165, 181, 0.16); }
-.pv-tag--product { fill: rgba(91, 140, 255, 0.6); }
-.pv-tag--data { fill: rgba(66, 217, 245, 0.55); }
-.pv-tag--security { fill: rgba(139, 124, 255, 0.6); }
+.pv-card { fill: rgb(var(--c-gray-rgb) / 0.045); stroke: var(--c-line); stroke-width: 1; }
+.pv-card--product { fill: rgb(var(--c-blue-rgb) / 0.1); stroke: var(--c-blue); }
+.pv-tag { fill: rgb(var(--c-gray-rgb) / 0.16); }
+.pv-tag--product { fill: rgb(var(--c-blue-rgb) / 0.6); }
+.pv-tag--data { fill: rgb(var(--c-cyan-rgb) / 0.55); }
+.pv-tag--security { fill: rgb(var(--c-violet-rgb) / 0.6); }
 .pv-label { fill: var(--c-muted); font-size: 12px; }
 .pv-mono { fill: var(--c-text); font-size: 13px; opacity: 0.85; }
-.pv-cell { fill: rgba(154, 165, 181, 0.03); stroke: rgba(154, 165, 181, 0.09); stroke-width: 1; }
-.pv-fill { fill: rgba(154, 165, 181, 0.18); }
+.pv-cell { fill: rgb(var(--c-gray-rgb) / 0.03); stroke: rgb(var(--c-gray-rgb) / 0.09); stroke-width: 1; }
+.pv-fill { fill: rgb(var(--c-gray-rgb) / 0.18); }
 .pv-fill--product { fill: var(--c-blue); opacity: 0.75; }
 .pv-fill--data { fill: var(--c-cyan); opacity: 0.75; }
 .pv-fill--security { fill: var(--c-violet); opacity: 0.8; }
@@ -191,12 +191,12 @@
 .pv-arrow { fill: none; stroke: var(--c-muted); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .pv-check { fill: none; stroke: var(--c-cyan); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .pv-check--warn { stroke: var(--c-muted); stroke-dasharray: 2 3; }
-.pv-sev { fill: rgba(154, 165, 181, 0.3); }
+.pv-sev { fill: rgb(var(--c-gray-rgb) / 0.3); }
 .pv-sev--security { fill: var(--c-violet); }
 .pv-wire { fill: none; stroke: var(--c-line-strong); stroke-width: 1.5; }
-.pv-node { fill: rgba(154, 165, 181, 0.05); stroke: var(--c-line-strong); stroke-width: 1; }
-.pv-node--data { stroke: var(--c-cyan); fill: rgba(66, 217, 245, 0.08); }
-.pv-node--security { stroke: var(--c-violet); fill: rgba(139, 124, 255, 0.08); }
+.pv-node { fill: rgb(var(--c-gray-rgb) / 0.05); stroke: var(--c-line-strong); stroke-width: 1; }
+.pv-node--data { stroke: var(--c-cyan); fill: rgb(var(--c-cyan-rgb) / 0.08); }
+.pv-node--security { stroke: var(--c-violet); fill: rgb(var(--c-violet-rgb) / 0.08); }
 
 /* ---------- Case-study diagrams ---------- */
 
@@ -262,7 +262,7 @@
 .dg-key--fk { fill: var(--c-blue); }
 .dg-relation {
   fill: none;
-  stroke: rgba(66, 217, 245, 0.5);
+  stroke: rgb(var(--c-cyan-rgb) / 0.5);
   stroke-width: 1.2;
   stroke-dasharray: 4 3;
 }

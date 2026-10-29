@@ -129,9 +129,9 @@ export function heroSystem(): SvgNode {
       viewBox: '0 0 640 560',
       class: 'hero-system',
       role: 'img',
-      'aria-labelledby': 'hero-system-title',
+      // aria-label rather than <title>: same description for screen readers, no hover tooltip.
+      'aria-label': 'Diagram of a web application as three layers — interface, services and data — with requests passing between them and access checks at each layer.',
     },
-    h('title', { id: 'hero-system-title' }, 'Diagram of a web application as three layers — interface, services and data — with requests passing between them and access checks at each layer.'),
     h('g', { class: 'hv-flows' }, ...flows),
     ...planes.reverse(),
     h(

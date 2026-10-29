@@ -41,34 +41,6 @@
 }
 
 :root {
-  color-scheme: dark;
-
-  /* Surfaces */
-  --c-ink-0: #080b12;
-  --c-ink-1: #0b0d12;
-  --c-surface: #111722;
-  --c-surface-2: #172031;
-  --c-line: rgba(154, 165, 181, 0.14);
-  --c-line-strong: rgba(154, 165, 181, 0.3);
-  --c-gridline: rgba(154, 165, 181, 0.045);
-
-  /* Text */
-  --c-text: #f4f6fa;
-  --c-muted: #9aa5b5;
-  --c-subtle: #7e8a9b;
-
-  /* Domain accents */
-  --c-blue: #5b8cff;
-  --c-cyan: #42d9f5;
-  --c-violet: #8b7cff;
-
-  /* Light section */
-  --c-paper: #f4f6fa;
-  --c-paper-ink: #0b0d12;
-  --c-paper-muted: #4a5566;
-  --c-paper-line: rgba(11, 13, 18, 0.12);
-  --c-blue-on-paper: #2f5fd8;
-  --c-violet-on-paper: #5b48d6;
 
   /* Type */
   --f-display: 'Inter Display', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -117,6 +89,62 @@
   --dur-1: 160ms;
   --dur-2: 320ms;
   --dur-3: 700ms;
+}
+
+/* ---------------------------------------------------------------------
+   Colour themes. Dark is the default; tools/static/client/theme.js (also
+   public/theme.js) sets data-theme on <html> from the visitor's system setting
+   or their choice from the toggle. The approach section is always inverted.
+   --------------------------------------------------------------------- */
+
+:root,
+[data-theme='light'] .section--paper {
+  color-scheme: dark;
+  --c-ink-0: #080b12;
+  --c-ink-1: #0b0d12;
+  --c-surface: #111722;
+  --c-surface-2: #172031;
+  --c-gray-rgb: 154 165 181;
+  --c-line: rgb(var(--c-gray-rgb) / 0.14);
+  --c-line-strong: rgb(var(--c-gray-rgb) / 0.3);
+  --c-gridline: rgb(var(--c-gray-rgb) / 0.045);
+  --c-text: #f4f6fa;
+  --c-text-rgb: 244 246 250;
+  --c-muted: #9aa5b5;
+  --c-subtle: #7e8a9b;
+  --c-blue: #5b8cff;
+  --c-blue-rgb: 91 140 255;
+  --c-cyan: #42d9f5;
+  --c-cyan-rgb: 66 217 245;
+  --c-violet: #8b7cff;
+  --c-violet-rgb: 139 124 255;
+  --c-good: #7fe0a8;
+  --c-bad: #ff9b9b;
+}
+
+[data-theme='light'],
+:root:not([data-theme='light']) .section--paper {
+  color-scheme: light;
+  --c-ink-0: #f6f7fa;
+  --c-ink-1: #ffffff;
+  --c-surface: #eef1f6;
+  --c-surface-2: #e3e8f0;
+  --c-gray-rgb: 74 85 102;
+  --c-line: rgb(var(--c-gray-rgb) / 0.16);
+  --c-line-strong: rgb(var(--c-gray-rgb) / 0.32);
+  --c-gridline: rgb(var(--c-gray-rgb) / 0.07);
+  --c-text: #0b0d12;
+  --c-text-rgb: 11 13 18;
+  --c-muted: #4a5566;
+  --c-subtle: #5d6878;
+  --c-blue: #2f5fd8;
+  --c-blue-rgb: 47 95 216;
+  --c-cyan: #07728a;
+  --c-cyan-rgb: 7 114 138;
+  --c-violet: #5b48d6;
+  --c-violet-rgb: 91 72 214;
+  --c-good: #1a7641;
+  --c-bad: #b4232c;
 }
 
 [data-domain='product'] { --d: var(--c-blue); }

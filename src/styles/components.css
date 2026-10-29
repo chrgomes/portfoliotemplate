@@ -28,7 +28,7 @@
 }
 .btn:hover {
   --btn-line: var(--c-muted);
-  --btn-bg: rgba(244, 246, 250, 0.04);
+  --btn-bg: rgb(var(--c-text-rgb) / 0.04);
 }
 .btn:active {
   transform: translateY(1px);
@@ -39,8 +39,8 @@
   --btn-line: var(--c-text);
 }
 .btn--primary:hover {
-  --btn-bg: #ffffff;
-  --btn-line: #ffffff;
+  --btn-bg: color-mix(in srgb, var(--c-text) 86%, var(--c-ink-0));
+  --btn-line: var(--btn-bg);
 }
 .btn .icon {
   transition: transform var(--dur-2) var(--ease-out);
@@ -103,7 +103,7 @@
   border: 1.5px solid currentColor;
   border-radius: 50%;
 }
-.status--completed { color: #7fe0a8; }
+.status--completed { color: var(--c-good); }
 .status--completed::before { background: currentColor; }
 .status--in-development { color: var(--c-text); }
 .status--in-development::before {
@@ -144,7 +144,7 @@
   border-bottom: 1px solid transparent;
 }
 .site-nav.is-scrolled {
-  background: rgba(8, 11, 18, 0.78);
+  background: color-mix(in srgb, var(--c-ink-0) 80%, transparent);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
   backdrop-filter: blur(14px) saturate(140%);
   border-bottom-color: var(--c-line);
@@ -214,6 +214,40 @@
 .nav-cta {
   min-height: 40px;
   padding-inline: 1.1rem;
+}
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--c-text);
+  cursor: pointer;
+  transition: border-color var(--dur-1) ease, background-color var(--dur-1) ease;
+}
+.theme-toggle:hover {
+  border-color: var(--c-muted);
+  background: rgb(var(--c-text-rgb) / 0.05);
+}
+.theme-toggle .icon {
+  width: 18px;
+  height: 18px;
+  grid-area: 1 / 1;
+  transition: transform var(--dur-3) var(--ease-out), opacity var(--dur-2) ease;
+}
+/* Show the theme you'd switch to. */
+[data-theme='light'] .theme-toggle .icon--sun,
+:root:not([data-theme='light']) .theme-toggle .icon--moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
 }
 
 .nav-toggle {
@@ -354,7 +388,7 @@
   height: 84px;
   margin: -42px 0 0 -42px;
   border-radius: 50%;
-  border: 1px solid rgba(244, 246, 250, 0.55);
+  border: 1px solid rgb(var(--c-text-rgb) / 0.55);
   display: grid;
   place-items: center;
   font-family: var(--f-mono);
@@ -392,7 +426,7 @@
   align-items: center;
   gap: 0.5em;
   padding: 0.55rem 0.8rem;
-  border: 1px dashed rgba(66, 217, 245, 0.45);
+  border: 1px dashed rgb(var(--c-cyan-rgb) / 0.45);
   border-radius: var(--r-sm);
   color: var(--c-cyan);
   font-family: var(--f-mono);

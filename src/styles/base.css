@@ -82,7 +82,7 @@ select {
 }
 
 ::selection {
-  background: rgba(91, 140, 255, 0.35);
+  background: rgb(var(--c-blue-rgb) / 0.35);
   color: var(--c-text);
 }
 

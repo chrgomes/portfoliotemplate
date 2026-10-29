@@ -74,6 +74,7 @@ ${o.preview ? '<meta name="robots" content="noindex">' : ''}
 <link rel="manifest" href="${link(o, '/site.webmanifest')}">
 <link rel="preload" href="${link(o, '/fonts/InterDisplay-SemiBold.woff')}" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="${link(o, '/fonts/Inter-Regular.woff')}" as="font" type="font/woff" crossorigin>
+<script src="${link(o, '/theme.js')}"></script>
 <link rel="stylesheet" href="${link(o, '/assets/' + o.css)}">
 <script src="${link(o, '/assets/' + o.js)}" defer></script>
 ${jsonLd}
@@ -111,8 +112,11 @@ function nav(o: RenderOptions): string {
   <div class="container">
     <a class="brand" href="${link(o, '/')}" aria-label="${esc(displayName())}, home">${svg(monogram(initials()))}<span>${esc(displayName())}</span></a>
     <nav aria-label="Primary"><ul class="nav-links">${items}</ul></nav>
-    <a class="btn btn--primary nav-cta" href="${link(o, '/#contact')}">Let’s talk</a>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" aria-label="Open menu"><span></span><span></span></button>
+    <div class="nav-actions">
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to light mode">${ic('sun')}${ic('moon')}</button>
+      <a class="btn btn--primary nav-cta" href="${link(o, '/#contact')}">Let’s talk</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-sheet" aria-label="Open menu"><span></span><span></span></button>
+    </div>
   </div>
   <div class="nav-sheet" id="nav-sheet" hidden>
     <nav aria-label="Mobile"><ul>${sheet}</ul></nav>

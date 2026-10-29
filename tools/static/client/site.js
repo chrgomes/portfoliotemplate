@@ -370,6 +370,17 @@
     });
   }
 
+  /* ---------- Theme toggle (theme.js does the work) ---------- */
+  var themeBtn = $('[data-theme-toggle]');
+  if (themeBtn && window.portfolioTheme) {
+    window.portfolioTheme.onChange(function (theme, followsSystem) {
+      var label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+      themeBtn.setAttribute('aria-label', label);
+      themeBtn.title = label + (followsSystem ? ' (now matching your system setting)' : '');
+    });
+    themeBtn.addEventListener('click', function () { window.portfolioTheme.toggle(); });
+  }
+
   /* ---------- Year ---------- */
   $$('[data-year]').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
 })();
