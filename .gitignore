@@ -10,3 +10,6 @@ out-tsc/
 # Never commit the real contact form settings.
 contact-config.php
 contact-data/
+# Generated at build time from site.config.ts
+public/robots.txt
+public/sitemap.xml
