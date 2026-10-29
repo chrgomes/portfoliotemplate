@@ -167,25 +167,12 @@
   font-size: 1.05rem;
   letter-spacing: -0.01em;
 }
-.monogram .mg-frame {
-  fill: none;
-  stroke: var(--c-text);
-  stroke-width: 1.4;
-}
-.monogram .mg-inner {
-  fill: none;
-  stroke: var(--c-blue);
-  stroke-width: 1.4;
-}
-.monogram .mg-text {
+.monogram .mg-logo {
   fill: var(--c-text);
-  font-family: var(--f-display);
-  font-weight: 600;
-  font-size: 11px;
-  letter-spacing: -0.02em;
+  transition: fill var(--dur-1) ease;
 }
-.brand:hover .mg-inner {
-  stroke: var(--c-cyan);
+.brand:hover .mg-logo {
+  fill: var(--c-blue);
 }
 
 .nav-links {

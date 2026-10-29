@@ -11,7 +11,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { site, copy } from '../src/content/site.config';
-import { initials, displayName } from '../src/lib/helpers';
+import { displayName } from '../src/lib/helpers';
+import { LOGO_HEIGHT, LOGO_PATH, LOGO_WIDTH } from '../src/lib/logo';
 import { toSvgString } from '../src/lib/svg';
 import { heroSystem } from '../src/lib/visuals';
 
@@ -46,22 +47,24 @@ function heroCss(): string {
 
 const esc = (s: string): string => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
-function monogramSvg(size: number, withBg: boolean): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="${size}" height="${size}">
-${withBg ? '<rect width="40" height="40" rx="9" fill="#080b12"/>' : ''}
-<path d="M20 2 L37 11 V29 L20 38 L3 29 V11 Z" fill="${withBg ? 'none' : '#080b12'}" stroke="#f4f6fa" stroke-width="1.6"/>
-<path d="M3 11 L20 20 L37 11" fill="none" stroke="#5b8cff" stroke-width="1.6"/>
-<text x="20" y="31" text-anchor="middle" font-family="Inter Display, Inter, sans-serif" font-weight="600" font-size="11" fill="#f4f6fa">${esc(initials())}</text>
+/** The CG logo centred on a dark rounded square, for favicons and app icons. */
+function iconSvg(size: number): string {
+  const side = Math.round(LOGO_HEIGHT * 1.36);
+  const x = (side - LOGO_WIDTH) / 2;
+  const y = (side - LOGO_HEIGHT) / 2;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${side} ${side}" width="${size}" height="${size}">
+<rect width="${side}" height="${side}" rx="${Math.round(side * 0.22)}" fill="#080b12"/>
+<path transform="translate(${x} ${y})" d="${LOGO_PATH}" fill="#f4f6fa"/>
 </svg>`;
 }
 
 async function main(): Promise<void> {
   // Favicons
-  const favicon = monogramSvg(40, false);
+  const favicon = iconSvg(40);
   writeFileSync(join(pub, 'favicon.svg'), favicon);
-  await sharp(Buffer.from(monogramSvg(32, true)), { density: 300 }).resize(32, 32).png().toFile(join(pub, 'favicon-32.png'));
-  await sharp(Buffer.from(monogramSvg(180, true)), { density: 300 }).resize(180, 180).png().toFile(join(pub, 'apple-touch-icon.png'));
-  await sharp(Buffer.from(monogramSvg(512, true)), { density: 300 }).resize(512, 512).png().toFile(join(pub, 'icon-512.png'));
+  await sharp(Buffer.from(iconSvg(32)), { density: 300 }).resize(32, 32).png().toFile(join(pub, 'favicon-32.png'));
+  await sharp(Buffer.from(iconSvg(180)), { density: 300 }).resize(180, 180).png().toFile(join(pub, 'apple-touch-icon.png'));
+  await sharp(Buffer.from(iconSvg(512)), { density: 300 }).resize(512, 512).png().toFile(join(pub, 'icon-512.png'));
 
   writeFileSync(
     join(pub, 'site.webmanifest'),
@@ -93,10 +96,7 @@ async function main(): Promise<void> {
 <style>${heroCss()}</style>
 <rect width="1200" height="630" fill="#080b12"/>
 ${grid}
-<g transform="translate(72 64)">
-  <path d="M20 2 L37 11 V29 L20 38 L3 29 V11 Z" fill="none" stroke="#f4f6fa" stroke-width="1.6"/>
-  <path d="M3 11 L20 20 L37 11" fill="none" stroke="#5b8cff" stroke-width="1.6"/>
-</g>
+<g transform="translate(72 60) scale(${(44 / LOGO_HEIGHT).toFixed(4)})"><path d="${LOGO_PATH}" fill="#f4f6fa"/></g>
 <text x="128" y="92" font-family="Inter Display" font-weight="600" font-size="26" fill="#f4f6fa">${esc(site.name)}</text>
 ${lines}
 <text x="72" y="560" font-family="Inter" font-size="24" fill="#9aa5b5">${esc(site.role)}</text>

@@ -1,5 +1,6 @@
 import { h, pts, r, type Pt, type SvgNode } from './svg';
 import type { Domain, PreviewKind } from '../content/types';
+import { LOGO_HEIGHT, LOGO_PATH, LOGO_WIDTH } from './logo';
 
 /* ==================================================================================
  * Hero: three isometric planes — interface, services, data — with requests flowing
@@ -334,16 +335,20 @@ export function glyph(kind: 'understand' | 'design' | 'build' | 'secure'): SvgNo
 }
 
 /* ==================================================================================
- * Monogram — the brand mark. Initials set inside an isometric cube outline that
- * echoes the hero's stacked planes.
+ * Brand mark — the CG logo (see logo.ts). `size` is its height in pixels.
  * ================================================================================ */
 
-export function monogram(chars: string, size = 36): SvgNode {
+export function monogram(_chars: string, size = 32): SvgNode {
   return h(
     'svg',
-    { viewBox: '0 0 40 40', width: size, height: size, class: 'monogram', 'aria-hidden': 'true', focusable: 'false' },
-    h('path', { d: 'M20 2 L37 11 V29 L20 38 L3 29 V11 Z', class: 'mg-frame' }),
-    h('path', { d: 'M3 11 L20 20 L37 11', class: 'mg-inner' }),
-    h('text', { x: 20, y: 31, class: 'mg-text', 'text-anchor': 'middle' }, chars.slice(0, 2)),
+    {
+      viewBox: `0 0 ${LOGO_WIDTH} ${LOGO_HEIGHT}`,
+      width: Math.round((size * LOGO_WIDTH) / LOGO_HEIGHT),
+      height: size,
+      class: 'monogram',
+      'aria-hidden': 'true',
+      focusable: 'false',
+    },
+    h('path', { d: LOGO_PATH, class: 'mg-logo' }),
   );
 }
