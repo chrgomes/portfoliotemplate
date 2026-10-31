@@ -311,7 +311,7 @@
   .nav-sheet li + li {
     border-top: 1px solid var(--c-line);
   }
-  .nav-sheet a {
+  .nav-sheet li a {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -322,12 +322,14 @@
     letter-spacing: -0.03em;
     text-decoration: none;
   }
-  .nav-sheet a .mono {
+  .nav-sheet li a .mono {
     color: var(--c-subtle);
   }
   .nav-sheet .btn {
     width: 100%;
+    min-height: 52px;
     margin-top: var(--s-6);
+    font-size: var(--t-base);
   }
   body.nav-open {
     overflow: hidden;
