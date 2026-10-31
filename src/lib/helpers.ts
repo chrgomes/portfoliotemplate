@@ -73,6 +73,14 @@ export function projectMeta(p: Project): PageMeta {
   };
 }
 
+export const privacyMeta = (): PageMeta => ({
+  title: `Privacy notice | ${site.name}`,
+  description: 'How this site handles your information: no cookies or tracking, and contact form messages used only to reply.',
+  path: '/privacy/',
+  type: 'website',
+  jsonLd: [],
+});
+
 export const notFoundMeta = (): PageMeta => ({
   title: `Page not found | ${site.name}`,
   description: 'This page does not exist.',
@@ -82,7 +90,7 @@ export const notFoundMeta = (): PageMeta => ({
 });
 
 /** Every public URL, for the sitemap. */
-export const sitemapPaths = (): string[] => ['/', ...featuredProjects().map(projectPath)];
+export const sitemapPaths = (): string[] => ['/', ...featuredProjects().map(projectPath), '/privacy/'];
 
 /** Neighbouring featured project for the "next case study" link. */
 export function nextProject(p: Project): Project {

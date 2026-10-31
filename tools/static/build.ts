@@ -12,8 +12,8 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { site } from '../../src/content/site.config';
 import { featuredProjects } from '../../src/content/projects';
-import { homeMeta, projectMeta, notFoundMeta, sitemapPaths, absoluteUrl } from '../../src/lib/helpers';
-import { layout, home, caseStudy, notFound, type RenderOptions } from './render';
+import { homeMeta, projectMeta, notFoundMeta, privacyMeta, sitemapPaths, absoluteUrl } from '../../src/lib/helpers';
+import { layout, home, caseStudy, notFound, privacy, type RenderOptions } from './render';
 import { robotsTxt, sitemapXml } from '../seo-files';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -68,6 +68,10 @@ function main(): void {
   for (const p of featuredProjects()) {
     const o = opts('../../');
     write(`work/${p.slug}/index.html`, layout(o, projectMeta(p), caseStudy(o, p), 'page-case'));
+  }
+  {
+    const o = opts('../');
+    write('privacy/index.html', layout(o, privacyMeta(), privacy(o), 'page-privacy'));
   }
   write('404.html', layout(opts('./'), notFoundMeta(), notFound(opts('./')), 'page-404'));
 

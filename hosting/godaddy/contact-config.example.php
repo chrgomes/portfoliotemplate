@@ -40,7 +40,11 @@ return [
     'max_links' => 2,
 
     // Messages containing any of these (case-insensitive) are dropped quietly and saved to
-    // contact-data/filtered.log so a real message caught by mistake isn't lost.
+    // contact-data/filtered-YYYY-MM.log so a real message caught by mistake isn't lost.
+    // Filtered-message logs are deleted after this many days. Keep it in line with the
+    // privacy notice (src/content/privacy.ts says 30 days).
+    'filtered_retention_days' => 30,
+
     'spam_phrases' => [
         'backlinks', 'guest post', 'seo services', 'rank your website', 'first page of google',
         'increase your traffic', 'web traffic', 'casino', 'crypto investment', 'forex',

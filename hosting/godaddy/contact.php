@@ -84,6 +84,7 @@ $mode = (string)($config['mode'] ?? 'mail');
 $hmacKey = (string)($config['challenge_key'] ?? '');
 $difficulty = max(1000, (int)($config['challenge_difficulty'] ?? 50000));
 $maxLinks = (int)($config['max_links'] ?? 2);
+$filteredRetentionDays = max(1, (int)($config['filtered_retention_days'] ?? 30));
 $spamPhrases = array_map('strtolower', (array)($config['spam_phrases'] ?? []));
 $now = time();
 
@@ -94,6 +95,18 @@ if (strlen($hmacKey) < 32) {
 if (!is_dir($storage) && !@mkdir($storage, 0700, true)) {
     error_log('contact.php: cannot create storage dir ' . $storage);
     respond(500, false, 'The message couldn’t be sent. Please use the email link instead.', $wantsJson);
+}
+
+// ---- Housekeeping: delete stored data once it's no longer needed --------------------
+// Rate-limit files after a day, filtered-message logs after filtered_retention_days.
+// Runs on about 1 in 20 requests so it costs nothing noticeable.
+if (random_int(1, 20) === 1) {
+    foreach (glob($storage . '/rate-*.json') ?: [] as $f) {
+        if (@filemtime($f) < $now - 86400) @unlink($f);
+    }
+    foreach (glob($storage . '/filtered-*.log') ?: [] as $f) {
+        if (@filemtime($f) < $now - $filteredRetentionDays * 86400) @unlink($f);
+    }
 }
 
 // ---- Same-origin check -----------------------------------------------------------
@@ -197,7 +210,8 @@ if (!$fresh) {
     respond(400, false, 'This form was already sent. Reload the page to send another message.', $wantsJson);
 }
 
-$filteredLog = $storage . '/filtered.log';
+// One log file per month; files older than filtered_retention_days are deleted (see cleanup below).
+$filteredLog = $storage . '/filtered-' . date('Y-m', $now) . '.log';
 $keep = static function (string $reason) use ($filteredLog, $name, $email, $message, $now): void {
     // Kept privately so a real message caught by mistake isn't lost. Review it now and then.
     @file_put_contents($filteredLog, date('c', $now) . " [{$reason}] {$name} <{$email}>\n{$message}\n-----\n", FILE_APPEND | LOCK_EX);

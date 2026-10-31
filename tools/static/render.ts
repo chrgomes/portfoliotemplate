@@ -8,6 +8,7 @@ import { skillGroups } from '../../src/content/expertise';
 import { about } from '../../src/content/about';
 import type { Project, Credential } from '../../src/content/types';
 import { caseStudySections, type CaseSection } from '../../src/lib/case-study';
+import { privacySections, privacyUpdated } from '../../src/content/privacy';
 import { toSvgString, type SvgNode } from '../../src/lib/svg';
 import { heroSystem, projectPreview, glyph, monogram } from '../../src/lib/visuals';
 import { architectureDiagram, dataModelDiagram } from '../../src/lib/diagrams';
@@ -131,6 +132,7 @@ function footer(o: RenderOptions): string {
     c.github ? `<li><a href="${esc(c.github)}" rel="me noopener" target="_blank">${ic('github')}GitHub</a></li>` : '',
     c.linkedin ? `<li><a href="${esc(c.linkedin)}" rel="me noopener" target="_blank">${ic('linkedin')}LinkedIn</a></li>` : '',
     c.email ? `<li><a href="mailto:${esc(c.email)}">${ic('mail')}Email</a></li>` : '',
+    `<li><a href="${link(o, '/privacy/')}">Privacy</a></li>`,
   ].join('');
   const year = new Date().getFullYear();
   return `<footer class="site-footer">
@@ -476,6 +478,29 @@ export function caseStudy(o: RenderOptions, p: Project): string {
   </nav>
 </article>`;
 }
+
+export function privacy(o: RenderOptions): string {
+  const sections = privacySections()
+    .map(
+      (s) => `<section aria-labelledby="pv-${slugify(s.title)}">
+  <h2 id="pv-${slugify(s.title)}">${esc(s.title)}</h2>
+  ${(s.paragraphs ?? []).map((t) => `<p>${esc(t)}</p>`).join('')}
+  ${s.items?.length ? list(s.items) : ''}
+</section>`,
+    )
+    .join('\n');
+  const updated = new Date(privacyUpdated + 'T12:00:00Z').toLocaleDateString('en-CA', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
+  return `<article class="legal">
+  <div class="container">
+    <a class="cs-back text-link" href="${link(o, '/')}">${ic('arrow-left')}Home</a>
+    <h1>Privacy notice</h1>
+    <p class="legal-updated mono">Last updated <time datetime="${privacyUpdated}">${updated}</time></p>
+    <div class="legal-body">${sections}</div>
+  </div>
+</article>`;
+}
+
+const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function notFound(o: RenderOptions): string {
   return `<section class="section not-found">

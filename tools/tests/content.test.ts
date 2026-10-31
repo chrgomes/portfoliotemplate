@@ -72,7 +72,8 @@ test('"used in" links are derived from project tech lists', () => {
 
 test('sitemap lists the home page and every featured case study', () => {
   const xml = sitemapXml();
-  assert.equal(sitemapPaths().length, featuredProjects().length + 1);
+  assert.equal(sitemapPaths().length, featuredProjects().length + 2);
+  assert.ok(xml.includes('/privacy/'));
   for (const p of featuredProjects()) assert.ok(xml.includes(`/work/${p.slug}/`));
 });
 

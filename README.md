@@ -157,9 +157,11 @@ official widget can be dropped in later without changing `contact.php`.
 
 **Tuning** (all in `contact-config.php`): raise `challenge_difficulty` if spam still gets through,
 change `max_links`, or edit the `spam_phrases` list. Messages dropped by the phrase or
-repeat filters are saved to `portfolio-private/contact-data/filtered.log`, so check it now and
-then for anything real that was caught by mistake. Nothing else about visitors is stored; IP
-addresses appear only as salted hashes in the rate-limit files.
+repeat filters are saved to `portfolio-private/contact-data/filtered-YYYY-MM.log`, so check them
+now and then for anything real that was caught by mistake. Those logs are deleted automatically
+after `filtered_retention_days` (30 by default) and rate-limit files after a day. Nothing else
+about visitors is stored; IP addresses appear only as salted hashes in the rate-limit files.
+If you change any of this, update the privacy notice (`src/content/privacy.ts`) to match.
 
 **Prefer not to use PHP?** Set `contact.formEndpoint` to a Formspree or Web3Forms URL and
 `contact.challengeEndpoint` to `null` (and add that domain to `connect-src` and `form-action` in

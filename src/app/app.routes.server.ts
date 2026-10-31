@@ -12,6 +12,7 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
     getPrerenderParams: async () => featuredProjects().map((p) => ({ slug: p.slug })),
   },
+  { path: 'privacy', renderMode: RenderMode.Prerender },
   // Copied to /404.html by tools/angular-postbuild.ts.
   { path: 'not-found', renderMode: RenderMode.Prerender },
   { path: '**', renderMode: RenderMode.Client },
