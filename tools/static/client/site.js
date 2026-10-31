@@ -193,26 +193,109 @@
     });
   }
 
-  /* ---------- Process timeline ---------- */
+  /* ---------- Process timeline ----------
+   * Click or hover a step to select it. With motion allowed, the line also fills as the
+   * visitor scrolls, a dot rides its tip, and steps (and their glyphs) light up as reached. */
+  // Own scope, so its helper names can't clash with the rest of this file.
+  (function () {
   var process = $('[data-process]');
   if (process) {
     root.classList.add('js-process');
+    var wrap = process.parentElement;
     var steps = $$('.step', process);
     var setStep = function (n) {
-      process.style.setProperty('--active', String(n));
+      process.style.setProperty('--active', String(Math.max(n, 0)));
       steps.forEach(function (s, i) {
         s.classList.toggle('is-active', i === n);
         s.classList.toggle('is-done', i < n);
         $('.step-btn', s).setAttribute('aria-pressed', String(i === n));
       });
     };
-    $$('.step-btn', process).forEach(function (b) {
-      var n = Number(b.getAttribute('data-step'));
-      b.addEventListener('click', function () { setStep(n); });
-      if (finePointer) b.addEventListener('mouseenter', function () { setStep(n); });
-    });
-    setStep(0);
+
+    if (reduceMotion) {
+      $$('.step-btn', process).forEach(function (b) {
+        var n = Number(b.getAttribute('data-step'));
+        b.addEventListener('click', function () { setStep(n); });
+        if (finePointer) b.addEventListener('mouseenter', function () { setStep(n); });
+      });
+      setStep(0);
+    } else {
+      root.classList.add('js-process-anim');
+      var vertical = window.matchMedia('(max-width: 900px)');
+      var nums = steps.map(function (s) { return $('.step-num', s); });
+      var centers = [];
+      var manual = null;
+      var manualY = 0;
+      var queued = false;
+
+      // Where each numbered circle sits along the line, relative to the list.
+      var measure = function () {
+        var r = process.getBoundingClientRect();
+        centers = nums.map(function (n) {
+          var b = n.getBoundingClientRect();
+          return vertical.matches ? b.top + b.height / 2 - r.top : b.left + b.width / 2 - r.left;
+        });
+        wrap.style.setProperty('--p-start', centers[0] + 'px');
+        wrap.style.setProperty('--p-end', centers[centers.length - 1] + 'px');
+      };
+
+      var update = function () {
+        queued = false;
+        var first = centers[0];
+        var last = centers[centers.length - 1];
+        var pos;
+        var active = -1;
+        if (manual !== null) {
+          pos = centers[manual];
+          active = manual;
+        } else {
+          var r = process.getBoundingClientRect();
+          var vh = window.innerHeight;
+          // Desktop: fills while the list moves from 85% to 35% of the screen height.
+          // Phones (steps stacked): the fill follows a point 60% down the screen.
+          var p = vertical.matches ? (vh * 0.6 - (r.top + first)) / (last - first) : (vh * 0.85 - r.top) / (vh * 0.5);
+          p = Math.max(0, Math.min(1, p));
+          pos = first + (last - first) * p;
+          if (p > 0) {
+            centers.forEach(function (c, i) { if (pos >= c - 1) active = i; });
+          }
+        }
+        wrap.style.setProperty('--p-pos', pos + 'px');
+        wrap.style.setProperty('--p-dot', active >= 0 ? '1' : '0');
+        setStep(active);
+      };
+      var queue = function () {
+        if (!queued) {
+          queued = true;
+          requestAnimationFrame(update);
+        }
+      };
+
+      var select = function (n) {
+        manual = n;
+        manualY = window.scrollY;
+        queue();
+      };
+      $$('.step-btn', process).forEach(function (b) {
+        var n = Number(b.getAttribute('data-step'));
+        b.addEventListener('click', function () { select(n); });
+        if (finePointer) b.addEventListener('mouseenter', function () { select(n); });
+      });
+
+      window.addEventListener('scroll', function () {
+        // Scrolling on hands control back to the scroll position.
+        if (manual !== null && Math.abs(window.scrollY - manualY) > 60) manual = null;
+        queue();
+      }, { passive: true });
+      var remeasure = function () { measure(); queue(); };
+      window.addEventListener('resize', remeasure);
+      window.addEventListener('load', remeasure);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
+      measure();
+      update();
+    }
   }
+  })();
 
   /* ---------- Copy email ---------- */
   $$('[data-copy]').forEach(function (btn) {
