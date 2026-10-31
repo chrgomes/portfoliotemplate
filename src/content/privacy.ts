@@ -48,6 +48,7 @@ export function privacySections(): PrivacySection[] {
         'Your browser solves a small puzzle in the background before sending. It doesn’t collect anything about you or your device.',
         'To limit how many messages one connection can send, your IP address is stored only in scrambled, one-way form (a salted hash) and deleted within a day.',
         'Messages caught by the spam filter are kept in a private log on the server, so a real message flagged by mistake isn’t lost. These logs are deleted automatically after 30 days.',
+        'If someone repeatedly abuses the form, I may block their IP address or network from sending messages. Only the blocked address is kept, and only for as long as the block is needed.',
       ],
     },
     {

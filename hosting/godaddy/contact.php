@@ -19,7 +19,9 @@
  *      The format matches ALTCHA (https://altcha.org), so its official widget can be
  *      swapped in later without changing this file.
  *   5. Content filter: too many links, links in the name, spam phrases, repeated messages
- *   6. Rate limit per visitor (IP addresses are stored only as salted hashes)
+ *   6. Rate limit per visitor (IP addresses are stored only as salted hashes; an IPv6
+ *      visitor's whole /64 block counts as one visitor)
+ *   7. Block list of addresses or ranges you choose, in contact-config.php
  */
 
 declare(strict_types=1);
@@ -138,11 +140,77 @@ if ($method !== 'POST') {
     respond(405, false, 'Use the form on the contact section to send a message.', $wantsJson);
 }
 
+/** Binary form of an address; IPv4-mapped IPv6 (::ffff:1.2.3.4) becomes plain IPv4. */
+function ip_bin(string $ip): ?string
+{
+    $bin = @inet_pton(trim($ip));
+    if ($bin === false) {
+        return null;
+    }
+    if (strlen($bin) === 16 && substr($bin, 0, 12) === str_repeat("\0", 10) . "\xff\xff") {
+        return substr($bin, 12);
+    }
+    return $bin;
+}
+
+/**
+ * The address the rate limit counts by. IPv4 as-is; IPv6 reduced to its /64 block, because
+ * one home or mobile connection usually gets a whole /64 and could otherwise rotate
+ * through addresses to dodge the limit.
+ */
+function visitor_id(string $ip): string
+{
+    $bin = ip_bin($ip);
+    if ($bin === null) {
+        return $ip;
+    }
+    return strlen($bin) === 16
+        ? inet_ntop(substr($bin, 0, 8) . str_repeat("\0", 8)) . '/64'
+        : (string)inet_ntop($bin);
+}
+
+/** Whether $ip matches an entry like "203.0.113.7", "203.0.113.0/24" or "2001:db8::/32". */
+function ip_matches(string $ip, string $rule): bool
+{
+    [$net, $bits] = array_pad(explode('/', trim($rule), 2), 2, null);
+    $ipBin = ip_bin($ip);
+    $netBin = ip_bin((string)$net);
+    if ($ipBin === null || $netBin === null || strlen($ipBin) !== strlen($netBin)) {
+        return false;
+    }
+    $max = strlen($ipBin) * 8;
+    if ($bits !== null && !ctype_digit($bits)) {
+        return false;
+    }
+    $bits = $bits === null ? $max : (int)$bits;
+    if ($bits > $max) {
+        return false;
+    }
+    $bytes = intdiv($bits, 8);
+    if (substr($ipBin, 0, $bytes) !== substr($netBin, 0, $bytes)) {
+        return false;
+    }
+    $rest = $bits % 8;
+    if ($rest === 0) {
+        return true;
+    }
+    $mask = (0xff << (8 - $rest)) & 0xff;
+    return (ord($ipBin[$bytes]) & $mask) === (ord($netBin[$bytes]) & $mask);
+}
+
 /** A posted field as a string; anything else (e.g. name[]=x) counts as empty. */
 function field(string $key): string
 {
     $v = $_POST[$key] ?? '';
     return is_string($v) ? $v : '';
+}
+
+// ---- Block list (fail silently: the sender sees "sent", nothing is delivered) ---------
+$ip = (string)($_SERVER['REMOTE_ADDR'] ?? '');
+foreach ((array)($config['blocked_ips'] ?? []) as $rule) {
+    if (is_string($rule) && $rule !== '' && ip_matches($ip, $rule)) {
+        respond(200, true, 'Message sent.', $wantsJson);
+    }
 }
 
 // ---- Bot checks (fail silently so bots learn nothing) -------------------------------
@@ -234,8 +302,7 @@ if ($repeat) {
 }
 
 // ---- Rate limit (per visitor) ---------------------------------------------------------
-$ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-$key = hash('sha256', $ip . '|' . (string)($config['salt'] ?? 'portfolio'));
+$key = hash('sha256', visitor_id($ip !== '' ? $ip : 'unknown') . '|' . (string)($config['salt'] ?? 'portfolio'));
 $rateFile = $storage . '/rate-' . $key . '.json';
 $hits = [];
 if (is_readable($rateFile)) {

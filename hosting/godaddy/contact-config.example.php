@@ -22,7 +22,7 @@ return [
     // Your site's address(es), no trailing slash. Requests from anywhere else are refused.
     'allowed_origins' => ['https://www.yourdomain.com', 'https://yourdomain.com'],
 
-    // Messages allowed per visitor per hour.
+    // Messages allowed per visitor per hour. IPv6 visitors are counted per /64 block.
     'max_per_hour' => 5,
 
     // Any random string; used to anonymise visitors' IP addresses in the rate-limit files.
@@ -41,6 +41,12 @@ return [
 
     // Messages containing any of these (case-insensitive) are dropped quietly and saved to
     // contact-data/filtered-YYYY-MM.log so a real message caught by mistake isn't lost.
+    // Addresses or ranges whose messages are dropped quietly (they still see "sent").
+    // Single addresses or CIDR ranges, IPv4 or IPv6. Find an abuser's address in cPanel >
+    // Raw Access / Visitors at the time they used the form.
+    // Example: ['203.0.113.7', '198.51.100.0/24', '2001:db8:abcd::/48']
+    'blocked_ips' => [],
+
     // Filtered-message logs are deleted after this many days. Keep it in line with the
     // privacy notice (src/content/privacy.ts says 30 days).
     'filtered_retention_days' => 30,

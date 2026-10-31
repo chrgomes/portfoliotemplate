@@ -145,7 +145,8 @@ tracking of visitors. Layers, cheapest first:
 | Signed, one-time, 30-minute challenges | Replaying or forging a solved check | "Reload the page" only if they leave the form open for 30+ minutes |
 | Link limit, no links in names | Link spam | A clear message saying what to change |
 | Spam phrases, repeated messages | Ad spam from humans | Nothing (dropped quietly) |
-| 5 messages per visitor per hour | Floods | A message to try later |
+| 5 messages per visitor per hour (IPv6: per /64 block) | Floods, including address-hopping on IPv6 | A message to try later |
+| Block list (`blocked_ips`) | A specific person or network you choose to block | Nothing (a fake "sent") |
 
 **How the spam check works:** when someone first clicks into the form, their browser asks
 `contact.php?action=challenge` for a puzzle signed with your `challenge_key`, and works out the
@@ -162,6 +163,14 @@ now and then for anything real that was caught by mistake. Those logs are delete
 after `filtered_retention_days` (30 by default) and rate-limit files after a day. Nothing else
 about visitors is stored; IP addresses appear only as salted hashes in the rate-limit files.
 If you change any of this, update the privacy notice (`src/content/privacy.ts`) to match.
+
+**Blocking someone:** add their address or range to `blocked_ips` in `contact-config.php`
+(single addresses or CIDR ranges, IPv4 or IPv6). Find the address in cPanel → Raw Access or
+Visitors, at the time they used the form. They'll still see "Message sent", so they have no
+reason to try another route. If you put the site behind a proxy or firewall service (for
+example GoDaddy's Website Security add-on), every visitor may appear to come from the proxy's
+address: the rate limit and block list would then need the real address from the proxy's
+header, so ask before turning one on.
 
 **Prefer not to use PHP?** Set `contact.formEndpoint` to a Formspree or Web3Forms URL and
 `contact.challengeEndpoint` to `null` (and add that domain to `connect-src` and `form-action` in
