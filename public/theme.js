@@ -29,7 +29,7 @@
     var theme = current();
     root.setAttribute('data-theme', theme);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f7fa' : '#080b12');
+    if (meta) meta.setAttribute('content', theme === 'light' ? '#f6f7fa' : '#101a33');
     listeners.forEach(function (fn) {
       fn(theme, !saved);
     });

@@ -40,7 +40,7 @@ function respond(int $status, bool $ok, string $message, bool $json): void
         header('Content-Type: text/html; charset=utf-8');
         $safe = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
         echo "<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>"
-            . "<title>Contact</title><body style='font-family:system-ui;background:#080b12;color:#f4f6fa;padding:3rem 1.5rem;max-width:40rem;margin:auto'>"
+            . "<title>Contact</title><body style='font-family:system-ui;background:#101a33;color:#f4f6fa;padding:3rem 1.5rem;max-width:40rem;margin:auto'>"
             . "<p>{$safe}</p><p><a style='color:#5b8cff' href='/#contact'>Back to the site</a></p></body>";
     }
     exit;

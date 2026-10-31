@@ -21,9 +21,9 @@ const repo = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pub = join(repo, 'public');
 
 const COLORS: Record<string, string> = {
-  '--c-ink-0': '#080b12',
-  '--c-ink-1': '#0b0d12',
-  '--c-surface': '#111722',
+  '--c-ink-0': '#101a33',
+  '--c-ink-1': '#14203d',
+  '--c-surface': '#1a2848',
   '--c-line': 'rgba(154,165,181,0.14)',
   '--c-line-strong': 'rgba(154,165,181,0.3)',
   '--c-text': '#f4f6fa',
@@ -43,7 +43,7 @@ function heroCss(): string {
   return css
     .slice(start, end)
     .replace(/rgb\(var\(--c-(\w+)-rgb\) \/ ([0-9.]+)\)/g, (_, c: string, a: string) => `rgba(${RGB[c] ?? '136,136,136'},${a})`)
-    .replace(/color-mix\(in srgb, var\(--c-surface\) (\d+)%, transparent\)/g, (_, p: string) => `rgba(17,23,34,${Number(p) / 100})`)
+    .replace(/color-mix\(in srgb, var\(--c-surface\) (\d+)%, transparent\)/g, (_, p: string) => `rgba(26,40,72,${Number(p) / 100})`)
     .replace(/var\((--[\w-]+)\)/g, (_, v: string) => COLORS[v] ?? '#888')
     .replace(/\.hv-packet\s*\{[^}]*\}/, '.hv-packet{opacity:0}');
 }
@@ -56,7 +56,7 @@ function iconSvg(size: number): string {
   const x = (side - LOGO_WIDTH) / 2;
   const y = (side - LOGO_HEIGHT) / 2;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${side} ${side}" width="${size}" height="${size}">
-<rect width="${side}" height="${side}" rx="${Math.round(side * 0.22)}" fill="#080b12"/>
+<rect width="${side}" height="${side}" rx="${Math.round(side * 0.22)}" fill="#101a33"/>
 <path transform="translate(${x} ${y})" d="${LOGO_PATH}" fill="#f4f6fa"/>
 </svg>`;
 }
@@ -79,8 +79,8 @@ async function main(): Promise<void> {
           { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
         ],
-        theme_color: '#080b12',
-        background_color: '#080b12',
+        theme_color: '#101a33',
+        background_color: '#101a33',
         display: 'standalone',
       },
       null,
@@ -97,7 +97,7 @@ async function main(): Promise<void> {
     .join('');
   const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <style>${heroCss()}</style>
-<rect width="1200" height="630" fill="#080b12"/>
+<rect width="1200" height="630" fill="#101a33"/>
 ${grid}
 <g transform="translate(72 60) scale(${(44 / LOGO_HEIGHT).toFixed(4)})"><path d="${LOGO_PATH}" fill="#f4f6fa"/></g>
 <text x="128" y="92" font-family="Inter Display" font-weight="600" font-size="26" fill="#f4f6fa">${esc(site.name)}</text>

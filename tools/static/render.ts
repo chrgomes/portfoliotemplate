@@ -67,7 +67,7 @@ ${o.preview ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="${esc(site.name)} — ${esc(site.role)}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#080b12">
+<meta name="theme-color" content="#101a33">
 <link rel="icon" href="${link(o, '/favicon.svg')}" type="image/svg+xml">
 <link rel="icon" href="${link(o, '/favicon-32.png')}" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="${link(o, '/apple-touch-icon.png')}">

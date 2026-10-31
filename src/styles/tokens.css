@@ -100,10 +100,11 @@
 :root,
 [data-theme='light'] .section--paper {
   color-scheme: dark;
-  --c-ink-0: #080b12;
-  --c-ink-1: #0b0d12;
-  --c-surface: #111722;
-  --c-surface-2: #172031;
+  /* Ink blue */
+  --c-ink-0: #101a33;
+  --c-ink-1: #14203d;
+  --c-surface: #1a2848;
+  --c-surface-2: #22325a;
   --c-gray-rgb: 154 165 181;
   --c-line: rgb(var(--c-gray-rgb) / 0.14);
   --c-line-strong: rgb(var(--c-gray-rgb) / 0.3);
@@ -111,7 +112,7 @@
   --c-text: #f4f6fa;
   --c-text-rgb: 244 246 250;
   --c-muted: #9aa5b5;
-  --c-subtle: #7e8a9b;
+  --c-subtle: #8a96a7;
   --c-blue: #5b8cff;
   --c-blue-rgb: 91 140 255;
   --c-cyan: #42d9f5;
