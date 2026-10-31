@@ -31,6 +31,8 @@ export class SeoService {
     for (const [key, content, attr] of tags) {
       this.meta.updateTag({ [attr]: key, content }, `${attr}="${key}"`);
     }
+    if (page.noindex) this.meta.updateTag({ name: 'robots', content: 'noindex' });
+    else this.meta.removeTag('name="robots"');
 
     let canonical = this.doc.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
     if (!canonical) {

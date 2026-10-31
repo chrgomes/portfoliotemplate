@@ -145,6 +145,63 @@ export function heroSystem(): SvgNode {
 }
 
 /* ==================================================================================
+ * 404: the hero's stack with the middle layer missing. The request leaves the
+ * interface, finds no route, and falls through the gap.
+ * ================================================================================ */
+
+export function brokenSystem(): SvgNode {
+  const label = (cy: number, name: string, tech: string, techClass = ''): SvgNode[] => {
+    const right = iso(cy, 1, 0);
+    return [
+      line([right[0] + 12, right[1]], [right[0] + 40, right[1]], 'hv-leader'),
+      h('text', { x: r(right[0] + 50), y: r(right[1] - 4), class: 'hv-label' }, name),
+      h('text', { x: r(right[0] + 50), y: r(right[1] + 15), class: `hv-label hv-label--tech ${techClass}`.trim() }, tech),
+    ];
+  };
+  const [u, v] = LINKS[0];
+  const from = iso(LEVELS[0], u, v);
+  const gap = iso(LEVELS[1], u, v);
+
+  return h(
+    'svg',
+    {
+      viewBox: '0 0 640 560',
+      class: 'hero-system broken-system',
+      role: 'img',
+      'aria-label': 'The site diagram with its middle layer missing: a request leaves the interface, finds no route, and falls through the gap.',
+    },
+    // Data layer, dimmed: never reached.
+    h('g', { class: 'hv-plane hv-plane--2' },
+      // Dimmed in an inner group, so the plane's entrance animation can't override it.
+      h('g', { class: 'hv-unreached' },
+        h('polygon', { points: rhombus(LEVELS[2]), class: 'hv-face hv-face--data' }),
+        ...planeGrid(LEVELS[2]),
+        ...dataPlane(LEVELS[2]),
+        ...label(LEVELS[2], 'Data', 'MySQL'),
+      ),
+    ),
+    // The missing services layer: just a dashed outline where it should be.
+    h('g', { class: 'hv-plane hv-plane--1' },
+      h('polygon', { points: rhombus(LEVELS[1]), class: 'hv-missing' }),
+      ...label(LEVELS[1], 'Route', 'Not found', 'hv-label--error'),
+    ),
+    // The request's path: down from the interface, then off course.
+    h('g', { class: 'hv-flows' },
+      line(from, gap, 'hv-link'),
+      h('path', { d: `M ${r(gap[0])} ${r(gap[1])} q 30 40 70 150`, class: 'hv-link hv-link--lost' }),
+      h('circle', { cx: r(from[0]), cy: r(from[1]), r: 3.5, class: 'hv-packet hv-packet--lost' }),
+      h('circle', { cx: r(gap[0]), cy: r(gap[1]), r: 5, class: 'hv-gap-mark' }),
+    ),
+    h('g', { class: 'hv-plane hv-plane--0' },
+      h('polygon', { points: rhombus(LEVELS[0]), class: 'hv-face hv-face--product' }),
+      ...planeGrid(LEVELS[0]),
+      ...interfacePlane(LEVELS[0]),
+      ...label(LEVELS[0], 'Interface', 'Angular'),
+    ),
+  );
+}
+
+/* ==================================================================================
  * Project previews — abstract interface sketches, clearly labelled as concepts.
  * ================================================================================ */
 

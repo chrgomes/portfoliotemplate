@@ -28,6 +28,8 @@ export interface PageMeta {
   path: string;
   type: 'website' | 'article';
   jsonLd: object[];
+  /** Keep the page out of search results. */
+  noindex?: boolean;
 }
 
 export function homeMeta(): PageMeta {
@@ -87,6 +89,7 @@ export const notFoundMeta = (): PageMeta => ({
   path: '/404.html',
   type: 'website',
   jsonLd: [],
+  noindex: true,
 });
 
 /** Every public URL, for the sitemap. */

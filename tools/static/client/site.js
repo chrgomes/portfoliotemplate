@@ -464,6 +464,18 @@
     themeBtn.addEventListener('click', function () { window.portfolioTheme.toggle(); });
   }
 
+  /* ---------- 404: show the address that wasn't found ---------- */
+  var requested = $('[data-requested-path]');
+  if (requested) {
+    var path = window.location.pathname;
+    try { path = decodeURIComponent(path); } catch (e) { /* keep it encoded */ }
+    if (path.length > 60) path = path.slice(0, 57) + '…';
+    if (!/\/404\.html$/.test(path)) {
+    requested.textContent = path; // textContent, so nothing in the URL can become markup
+    requested.closest('.nf-request').hidden = false;
+    }
+  }
+
   /* ---------- Year ---------- */
   $$('[data-year]').forEach(function (el) { el.textContent = String(new Date().getFullYear()); });
 })();

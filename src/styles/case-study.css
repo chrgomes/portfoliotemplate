@@ -250,14 +250,111 @@
 }
 
 .not-found {
-  min-height: 60vh;
+  padding-top: clamp(2rem, 1rem + 4vw, 5rem);
+}
+.nf-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(1rem, 2vw, 2rem);
+  row-gap: var(--s-7);
+  align-items: center;
+}
+.nf-copy {
+  grid-column: 1 / span 6;
+  min-width: 0;
+}
+.nf-visual {
+  grid-column: 7 / -1;
+  max-width: 600px;
+  width: 100%;
+  justify-self: end;
+}
+.nf-request {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  margin-bottom: var(--s-5);
+  padding: 0.6rem 0.85rem;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-sm);
+  background: var(--c-ink-1);
+  color: var(--c-muted);
+  width: fit-content;
+  max-width: 100%;
+}
+.nf-request[hidden] {
+  display: none;
+}
+.nf-method {
+  color: var(--c-blue);
+}
+.nf-path {
+  color: var(--c-text);
+  overflow-wrap: anywhere;
+}
+.nf-status {
+  color: var(--c-bad);
 }
 .not-found h1 {
   font-size: var(--t-3xl);
   line-height: var(--lh-tight);
   letter-spacing: -0.04em;
-  margin: var(--s-4) 0;
-  max-width: 14ch;
+  max-width: 12ch;
+}
+.nf-lead {
+  margin-top: var(--s-5);
+  color: var(--c-muted);
+  font-size: var(--t-lg);
+  max-width: 40ch;
+}
+.nf-links {
+  margin-top: var(--s-7);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--c-line);
+}
+.nf-links > p {
+  color: var(--c-subtle);
+  margin-bottom: var(--s-3);
+}
+.nf-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.15rem;
+}
+.nf-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 40px;
+  color: var(--c-text);
+  text-decoration: none;
+}
+.nf-links a::before {
+  content: '';
+  width: 14px;
+  height: 2px;
+  background: var(--d);
+  transition: width var(--dur-2) var(--ease-out);
+}
+.nf-links a:hover::before {
+  width: 22px;
+}
+.nf-links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+@media (max-width: 900px) {
+  .nf-copy,
+  .nf-visual {
+    grid-column: 1 / -1;
+  }
+  .nf-visual {
+    justify-self: center;
+    max-width: 440px;
+  }
 }
 
 @media (max-width: 1000px) {

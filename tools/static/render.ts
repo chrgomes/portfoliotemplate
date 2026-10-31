@@ -10,7 +10,7 @@ import type { Project, Credential } from '../../src/content/types';
 import { caseStudySections, type CaseSection } from '../../src/lib/case-study';
 import { privacySections, privacyUpdated } from '../../src/content/privacy';
 import { toSvgString, type SvgNode } from '../../src/lib/svg';
-import { heroSystem, projectPreview, glyph, monogram, processGlyph } from '../../src/lib/visuals';
+import { heroSystem, brokenSystem, projectPreview, glyph, monogram, processGlyph } from '../../src/lib/visuals';
 import { architectureDiagram, dataModelDiagram } from '../../src/lib/diagrams';
 import { icon, type IconName } from '../../src/lib/icons';
 import {
@@ -58,7 +58,7 @@ export function layout(o: RenderOptions, meta: PageMeta, body: string, bodyClass
 <title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.description)}">
 <link rel="canonical" href="${esc(canonical)}">
-${o.preview ? '<meta name="robots" content="noindex">' : ''}
+${o.preview || meta.noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:type" content="${meta.type}">
 <meta property="og:title" content="${esc(meta.title)}">
 <meta property="og:description" content="${esc(meta.description)}">
@@ -506,12 +506,22 @@ export function privacy(o: RenderOptions): string {
 const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
 export function notFound(o: RenderOptions): string {
-  return `<section class="section not-found">
-  <div class="container">
-    <p class="mono muted">404</p>
-    <h1>This page doesn’t exist.</h1>
-    <p class="muted">The link may be out of date, or the address may have a typo.</p>
-    <div class="hero-actions"><a class="btn btn--primary" href="${link(o, '/')}">Go to the home page</a><a class="btn" href="${link(o, '/#work')}">See my work</a></div>
+  const projects = featuredProjects()
+    .map((p) => `<li><a href="${link(o, projectPath(p))}" data-domain="${p.domain}">${esc(p.title)}</a></li>`)
+    .join('');
+  return `<section class="section not-found" aria-labelledby="nf-title">
+  <div class="container nf-grid">
+    <div class="nf-copy">
+      <p class="nf-request mono" hidden><span class="nf-method">GET</span> <span class="nf-path" data-requested-path></span> <span class="nf-status">404 Not Found</span></p>
+      <h1 id="nf-title">This page doesn’t exist.</h1>
+      <p class="nf-lead">The link may be out of date, or the address may have a typo. Here’s where you can go instead.</p>
+      <div class="hero-actions"><a class="btn btn--primary" href="${link(o, '/')}">Go to the home page</a><a class="btn" href="${link(o, '/#work')}">See my work</a></div>
+      <nav class="nf-links" aria-labelledby="nf-links-title">
+        <p class="mono" id="nf-links-title">Case studies</p>
+        <ul>${projects}</ul>
+      </nav>
+    </div>
+    <div class="nf-visual">${svg(brokenSystem())}</div>
   </div>
 </section>`;
 }
