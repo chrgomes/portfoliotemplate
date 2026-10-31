@@ -946,6 +946,10 @@
 .form-status.is-error {
   color: var(--c-bad);
 }
+/* theme.js sets data-theme on <html>, so its presence means JavaScript is running. */
+:root[data-theme] .form-note--nojs {
+  display: none;
+}
 .form-note.form-note--warn {
   color: var(--c-text);
 }

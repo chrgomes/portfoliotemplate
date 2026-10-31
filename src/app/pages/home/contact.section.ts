@@ -73,12 +73,12 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
             </button>
             <p class="form-status" role="status" aria-live="polite"
                [class.is-success]="state() === 'sent'" [class.is-error]="state() === 'error'">{{ status() }}</p>
-            <noscript>
-              <p class="form-note form-note--warn">
-                This form needs JavaScript for its spam check.
-                @if (c.email) { You can email me at {{ c.email }} instead. } @else { Turn JavaScript on to send a message. }
-              </p>
-            </noscript>
+            <!-- Shown only without JavaScript: CSS hides it once theme.js runs. A noscript
+                 element can't be used here, because it breaks Angular hydration. -->
+            <p class="form-note form-note--warn form-note--nojs">
+              This form needs JavaScript for its spam check.
+              @if (c.email) { You can email me at {{ c.email }} instead. } @else { Turn JavaScript on to send a message. }
+            </p>
             <p class="form-note">Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.</p>
           </form>
         }

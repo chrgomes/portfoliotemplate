@@ -370,7 +370,7 @@ function contact(o: RenderOptions): string {
   <input type="hidden" name="altcha" value="">
   <button class="btn btn--primary" type="submit"${o.preview ? ' disabled' : ''}>${ic('send')}<span>Send message</span></button>
   <p class="form-status" role="status" aria-live="polite"></p>
-  <noscript><p class="form-note form-note--warn">This form needs JavaScript for its spam check.${c.email ? ` You can email me at ${esc(c.email)} instead.` : ' Turn JavaScript on to send a message.'}</p></noscript>
+  <p class="form-note form-note--warn form-note--nojs">This form needs JavaScript for its spam check.${c.email ? ` You can email me at ${esc(c.email)} instead.` : ' Turn JavaScript on to send a message.'}</p>
   <p class="form-note">${o.preview ? 'Preview only: the form sends through contact.php once the site is on your GoDaddy hosting.' : 'Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.'}</p>
 </form>`
     : '';
