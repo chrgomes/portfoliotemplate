@@ -151,7 +151,9 @@ export function home(o: RenderOptions): string {
 }
 
 function hero(o: RenderOptions): string {
-  const lines = copy.heroLines.map((l) => `<span class="line">${esc(l)}</span>`).join('');
+  // Spaces between the lines, so the heading reads as one sentence to search engines and
+  // screen readers ("Engineering the next layer", not "Engineeringthe next layer").
+  const lines = copy.heroLines.map((l) => `<span class="line">${esc(l)}</span>`).join(' ');
   const clock = site.timeZone
     ? `<p class="mono clock" data-clock="${esc(site.timeZone)}">Local time, ${esc(site.timeZoneLabel)}: <time>--:--</time></p>`
     : '';

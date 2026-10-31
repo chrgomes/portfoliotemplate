@@ -13,7 +13,8 @@ import { IconComponent } from '../../shared/icon.component';
         <div class="hero-grid">
           <h1 class="hero-title" id="hero-title">
             @for (line of lines; track $index) {
-              <span class="line">{{ line }}</span>
+              <!-- The trailing space keeps the words apart for search engines and screen readers. -->
+              <span class="line">{{ line }} </span>
             }
           </h1>
           <div class="hero-copy">
