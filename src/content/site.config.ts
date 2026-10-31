@@ -76,26 +76,31 @@ export const principles = [
 export const processSteps = [
   {
     title: 'Discover',
+    glyph: 'discover',
     body: 'Understand the problem, the people affected and the requirements that actually matter.',
     output: 'Problem statement, user needs, constraints',
   },
   {
     title: 'Architect',
+    glyph: 'architect',
     body: 'Plan the application, the data model and the technical approach before writing features.',
     output: 'Data model, API outline, component map',
   },
   {
     title: 'Develop',
+    glyph: 'develop',
     body: 'Build the interface, backend and integrations in small, reviewable increments.',
     output: 'Working features behind version control',
   },
   {
     title: 'Validate',
+    glyph: 'validate',
     body: 'Test functionality, usability, security and performance against the original requirements.',
     output: 'Test results, fixed defects, review notes',
   },
   {
     title: 'Refine',
+    glyph: 'refine',
     body: 'Improve the experience through iteration and feedback once real people use it.',
     output: 'Prioritised improvements',
   },

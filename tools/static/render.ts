@@ -10,7 +10,7 @@ import type { Project, Credential } from '../../src/content/types';
 import { caseStudySections, type CaseSection } from '../../src/lib/case-study';
 import { privacySections, privacyUpdated } from '../../src/content/privacy';
 import { toSvgString, type SvgNode } from '../../src/lib/svg';
-import { heroSystem, projectPreview, glyph, monogram } from '../../src/lib/visuals';
+import { heroSystem, projectPreview, glyph, monogram, processGlyph } from '../../src/lib/visuals';
 import { architectureDiagram, dataModelDiagram } from '../../src/lib/diagrams';
 import { icon, type IconName } from '../../src/lib/icons';
 import {
@@ -315,7 +315,7 @@ function processSection(): string {
   const steps = processSteps
     .map(
       (s, i) => `<li class="step${i === 0 ? ' is-active' : ''}">
-  <button class="step-btn" type="button" aria-pressed="${i === 0}" data-step="${i}"><span class="step-num">${String(i + 1).padStart(2, '0')}</span><h3>${esc(s.title)}</h3></button>
+  <button class="step-btn" type="button" aria-pressed="${i === 0}" data-step="${i}"><span class="step-num">${String(i + 1).padStart(2, '0')}</span><h3>${svg(processGlyph(s.glyph))}${esc(s.title)}</h3></button>
   <p>${esc(s.body)}</p>
   <p class="output mono">Produces: ${esc(s.output)}</p>
 </li>`,
@@ -324,7 +324,10 @@ function processSection(): string {
   return `<section class="section" id="process" aria-labelledby="process-title">
   <div class="container">
     <div class="section-head reveal"><h2 id="process-title">${esc(copy.processTitle)}</h2></div>
-    <ol class="process" data-process>${steps}</ol>
+    <div class="process-wrap">
+      <ol class="process" data-process>${steps}</ol>
+      <span class="process-dot" aria-hidden="true"></span>
+    </div>
   </div>
 </section>`;
 }

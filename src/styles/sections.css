@@ -671,13 +671,33 @@
   font-family: var(--f-mono);
   font-size: var(--t-xs);
   color: var(--c-muted);
-  transition: background-color var(--dur-2) ease, color var(--dur-2) ease, border-color var(--dur-2) ease;
+  /* The number's colour switches instantly so it never fades to match the circle mid-change. */
+  transition: background-color var(--dur-2) ease, border-color var(--dur-2) ease;
 }
 .step h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   font-size: var(--t-xl);
   letter-spacing: -0.025em;
   color: var(--c-muted);
   transition: color var(--dur-2) ease;
+}
+.step-glyph {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.step-glyph .sg-accent {
+  stroke: var(--c-blue);
+}
+.step-glyph .sg-ghost {
+  display: none;
 }
 .step p {
   margin-top: var(--s-3);
@@ -736,6 +756,82 @@
   .step p,
   .step .output {
     grid-column: 2;
+  }
+}
+
+/* Scroll-driven version (JavaScript on, motion allowed): the line fills as the visitor
+   scrolls, a dot rides its tip, and each step's glyph draws itself when reached.
+   tools/static/client/site.js / process.section.ts set --p-start, --p-end, --p-pos. */
+.process-wrap {
+  position: relative;
+}
+.process-dot {
+  display: none;
+}
+.js-process-anim .process::before {
+  left: var(--p-start, 0);
+  right: auto;
+  width: calc(var(--p-end, 100%) - var(--p-start, 0px));
+}
+.js-process-anim .process::after {
+  left: var(--p-start, 0);
+  width: calc(var(--p-pos, 0px) - var(--p-start, 0px));
+  transition: width 120ms linear;
+}
+.js-process-anim .process-dot {
+  display: block;
+  position: absolute;
+  /* Under the numbered circles, so it slides into each one rather than covering it. */
+  z-index: 0;
+  left: var(--p-pos, 0);
+  top: 21px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--c-blue);
+  box-shadow: 0 0 0 5px rgb(var(--c-blue-rgb) / 0.2);
+  transform: translate(-50%, -50%);
+  opacity: var(--p-dot, 0);
+  pointer-events: none;
+  transition: left 120ms linear, top 120ms linear, opacity var(--dur-2) ease;
+}
+.js-process-anim .step-glyph .sg-ghost {
+  display: inline;
+  opacity: 0.28;
+}
+.js-process-anim .step-glyph .sg-ink path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 900ms var(--ease-out);
+}
+.js-process-anim .step-glyph .sg-ink path:nth-child(2) {
+  transition-delay: 150ms;
+}
+.js-process-anim .step-glyph .sg-ink path:nth-child(3) {
+  transition-delay: 300ms;
+}
+.js-process-anim .step.is-done .step-glyph .sg-ink path,
+.js-process-anim .step.is-active .step-glyph .sg-ink path {
+  stroke-dashoffset: 0;
+}
+@media (max-width: 900px) {
+  .js-process-anim .process::before {
+    top: var(--p-start, 0);
+    bottom: auto;
+    left: 21px;
+    width: 1px;
+    height: calc(var(--p-end, 100%) - var(--p-start, 0px));
+  }
+  .js-process-anim .process::after {
+    top: var(--p-start, 0);
+    left: 21px;
+    width: 1px;
+    height: calc(var(--p-pos, 0px) - var(--p-start, 0px));
+    transition: height 120ms linear;
+  }
+  .js-process-anim .process-dot {
+    left: 21px;
+    top: var(--p-pos, 0);
   }
 }
 

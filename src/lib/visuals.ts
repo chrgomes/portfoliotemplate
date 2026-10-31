@@ -335,6 +335,37 @@ export function glyph(kind: 'understand' | 'design' | 'build' | 'secure'): SvgNo
 }
 
 /* ==================================================================================
+ * Process step glyphs — 32×32 line drawings that draw themselves as each step is
+ * reached. Paths only, each with pathLength=1, so the CSS draw-on works everywhere.
+ * ================================================================================ */
+
+export type ProcessGlyph = 'discover' | 'architect' | 'develop' | 'validate' | 'refine';
+
+export function processGlyph(kind: ProcessGlyph): SvgNode {
+  const p = (d: string, accent = false): SvgNode => h('path', { d, pathLength: 1, class: accent ? 'sg-accent' : undefined });
+  const ghost = (n: SvgNode): SvgNode => h('path', { d: n.a?.['d'] });
+  const shapes: Record<ProcessGlyph, SvgNode[]> = {
+    // Magnifier over a dot: looking closely at the problem.
+    discover: [p('M13 5 a8 8 0 1 0 0.01 0'), p('M19 19 L27 27'), p('M13 11.5 v3 M11.5 13 h3', true)],
+    // Three boxes wired together: planning the structure.
+    architect: [p('M3 4 h10 v8 h-10 Z M19 4 h10 v8 h-10 Z'), p('M11 20 h10 v8 h-10 Z'), p('M8 12 v4 h16 v-4 M16 16 v4', true)],
+    // Code brackets and a slash.
+    develop: [p('M10 9 L4 16 L10 23'), p('M22 9 L28 16 L22 23'), p('M18.5 7 L13.5 25', true)],
+    // A tick inside a circle.
+    validate: [p('M16 4 a12 12 0 1 0 0.01 0'), p('M10.5 16.5 L14.5 20.5 L22 12', true)],
+    // Two arrows chasing each other: iterate.
+    refine: [p('M26 13 A10.5 10.5 0 0 0 7 11 M7 5.5 V11 H12.5'), p('M6 19 A10.5 10.5 0 0 0 25 21 M25 26.5 V21 H19.5', true)],
+  };
+  // A faint copy underneath shows the shape before the bright stroke draws over it.
+  return h(
+    'svg',
+    { viewBox: '0 0 32 32', class: `step-glyph step-glyph--${kind}`, 'aria-hidden': 'true', focusable: 'false' },
+    h('g', { class: 'sg-ghost' }, ...shapes[kind].map(ghost)),
+    h('g', { class: 'sg-ink' }, ...shapes[kind]),
+  );
+}
+
+/* ==================================================================================
  * Brand mark — the CG logo (see logo.ts). `size` is its height in pixels.
  * ================================================================================ */
 
