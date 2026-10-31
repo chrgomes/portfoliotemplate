@@ -69,8 +69,8 @@ ${o.preview || meta.noindex ? '<meta name="robots" content="noindex">' : ''}
 <meta property="og:image:alt" content="${esc(site.name)} — ${esc(site.role)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#101a33">
+<link rel="icon" href="${link(o, '/favicon.ico')}" sizes="32x32">
 <link rel="icon" href="${link(o, '/favicon.svg')}" type="image/svg+xml">
-<link rel="icon" href="${link(o, '/favicon-32.png')}" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="${link(o, '/apple-touch-icon.png')}">
 <link rel="manifest" href="${link(o, '/site.webmanifest')}">
 <link rel="preload" href="${link(o, '/fonts/InterDisplay-SemiBold.woff')}" as="font" type="font/woff" crossorigin>
@@ -370,6 +370,7 @@ function contact(o: RenderOptions): string {
   <input type="hidden" name="altcha" value="">
   <button class="btn btn--primary" type="submit"${o.preview ? ' disabled' : ''}>${ic('send')}<span>Send message</span></button>
   <p class="form-status" role="status" aria-live="polite"></p>
+  <noscript><p class="form-note form-note--warn">This form needs JavaScript for its spam check.${c.email ? ` You can email me at ${esc(c.email)} instead.` : ' Turn JavaScript on to send a message.'}</p></noscript>
   <p class="form-note">${o.preview ? 'Preview only: the form sends through contact.php once the site is on your GoDaddy hosting.' : 'Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.'}</p>
 </form>`
     : '';

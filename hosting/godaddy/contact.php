@@ -68,6 +68,11 @@ function with_state(string $file, int $now, callable $update)
     return $result;
 }
 
+/** How long a spam-check challenge stays valid. */
+const CHALLENGE_LIFETIME = 1800;
+/** A real person takes longer than this between getting a challenge and sending. */
+const MIN_FILL_SECONDS = 2;
+
 const NOT_CONFIGURED = 'The contact form isn’t set up yet. Please use the email link instead.';
 
 // ---- Configuration -------------------------------------------------------------
@@ -120,7 +125,7 @@ if ($origin !== '' && $allowedOrigins && !in_array(rtrim($origin, '/'), $allowed
 // ---- Issue a challenge ------------------------------------------------------------
 $method = $_SERVER['REQUEST_METHOD'] ?? '';
 if ($method === 'GET' && ($_GET['action'] ?? '') === 'challenge') {
-    $expires = $now + 1800; // 30 minutes to fill in the form
+    $expires = $now + CHALLENGE_LIFETIME; // time to fill in the form
     $salt = bin2hex(random_bytes(12)) . '?expires=' . $expires;
     $number = random_int(0, $difficulty);
     $challenge = hash('sha256', $salt . $number);
@@ -255,6 +260,11 @@ if ($powOk) {
 }
 if (!$powOk) {
     respond(400, false, 'The spam check didn’t complete. Reload the page and try again.', $wantsJson);
+}
+// Too fast to be a person. Unlike the browser's `started` field, the challenge's issue
+// time is signed by this server, so a bot can't fake it. Dropped quietly.
+if ($now - ($expires - CHALLENGE_LIFETIME) < MIN_FILL_SECONDS) {
+    respond(200, true, 'Message sent.', $wantsJson);
 }
 // ---- Content filter -------------------------------------------------------------------
 $linkPattern = '~(https?://|www\.)~i';

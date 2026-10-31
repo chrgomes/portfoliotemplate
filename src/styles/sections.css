@@ -946,6 +946,9 @@
 .form-status.is-error {
   color: var(--c-bad);
 }
+.form-note.form-note--warn {
+  color: var(--c-text);
+}
 .form-note {
   color: var(--c-subtle);
   font-size: var(--t-xs);

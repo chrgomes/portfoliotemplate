@@ -15,9 +15,10 @@ Sitemap: ${absoluteUrl('/sitemap.xml')}
 `;
 
 export function sitemapXml(): string {
-  const today = new Date().toISOString().slice(0, 10);
+  // No <lastmod>: a build date on every page would be inaccurate, and search engines
+  // ignore sitemaps whose dates can't be trusted.
   const urls = sitemapPaths()
-    .map((p) => `  <url><loc>${absoluteUrl(p)}</loc><lastmod>${today}</lastmod></url>`)
+    .map((p) => `  <url><loc>${absoluteUrl(p)}</loc></url>`)
     .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

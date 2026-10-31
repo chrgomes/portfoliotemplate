@@ -140,7 +140,7 @@ tracking of visitors. Layers, cheapest first:
 | Layer | What it stops | What the visitor sees |
 |---|---|---|
 | Same-site check | Posts from other websites | Nothing |
-| Hidden trap field + 2-second minimum | Basic bots | Nothing (bots get a fake "sent") |
+| Hidden trap field + 2-second minimum (timed from the server-signed challenge, so it can't be faked) | Basic and fast bots | Nothing (bots get a fake "sent") |
 | **Spam check (proof of work)** | Bots that post straight to `contact.php`, or send in bulk | Nothing — it runs in the background while they type |
 | Signed, one-time, 30-minute challenges | Replaying or forging a solved check | "Reload the page" only if they leave the form open for 30+ minutes |
 | Link limit, no links in names | Link spam | A clear message saying what to change |
@@ -204,6 +204,19 @@ mean visitors always get the new version.
 
 - Light and dark themes. The site follows the visitor's system setting; the nav toggle switches to the other theme and remembers it until it matches the system again (`public/theme.js`). The approach section is always the inverse of the page. A faint column grid sits behind the page, and Inter / Inter Display are self-hosted (no Google Fonts request).
 - The brand mark is `src/lib/logo.ts`, a vector path. Replace it and run `npm run assets` to update the favicons and social image.
+
+## Icons, sitemap and robots.txt
+
+- **Icons** (`npm run assets`, from the CG logo): `favicon.ico` (16, 32 and 48 px, which browsers and
+  crawlers request automatically), `favicon.svg` for modern browsers, `apple-touch-icon.png` for
+  iPhone home screens, and `icon-192.png` / `icon-512.png` for Android via `site.webmanifest`.
+  Tab-sized icons use tighter padding so the logo stays legible at 16 px.
+- **`sitemap.xml`** lists the home page, every featured case study and the privacy notice, built from
+  `projects.ts`. It has no `<lastmod>` dates on purpose: a build date on every page would be
+  inaccurate, and search engines ignore dates they can't trust.
+- **`robots.txt`** allows everything except `contact.php` and points to the sitemap.
+- Both use `siteUrl` from `site.config.ts`, so set your real domain before building. The build
+  warns while it's still `example.com`.
 - The one bold moment is the hero diagram: interface, services and data as stacked layers, requests flowing between them, and an access-check rail beside every layer. It assembles once on load; everything else stays quiet.
 - Motion respects `prefers-reduced-motion`; content is visible without JavaScript and without animation.
 - The pointer ring and card tilt only run on desktop with a fine pointer; the system cursor is never hidden.

@@ -50,9 +50,13 @@ function heroCss(): string {
 
 const esc = (s: string): string => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
-/** The CG logo centred on a dark rounded square, for favicons and app icons. */
-function iconSvg(size: number): string {
-  const side = Math.round(LOGO_HEIGHT * 1.36);
+/**
+ * The CG logo centred on a dark rounded square, for favicons and app icons.
+ * `padding` is the square's size relative to the logo; tab icons use less, so the
+ * logo stays legible at 16-32 pixels.
+ */
+function iconSvg(size: number, padding = 1.36): string {
+  const side = Math.round(LOGO_HEIGHT * padding);
   const x = (side - LOGO_WIDTH) / 2;
   const y = (side - LOGO_HEIGHT) / 2;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${side} ${side}" width="${size}" height="${size}">
@@ -61,13 +65,39 @@ function iconSvg(size: number): string {
 </svg>`;
 }
 
+/** Pack PNG images into a .ico file (PNG-in-ICO, supported by every current browser). */
+function ico(images: [number, Buffer][]): Buffer {
+  const header = Buffer.alloc(6 + images.length * 16);
+  header.writeUInt16LE(0, 0); // reserved
+  header.writeUInt16LE(1, 2); // type: icon
+  header.writeUInt16LE(images.length, 4);
+  let offset = header.length;
+  images.forEach(([size, data], i) => {
+    const e = 6 + i * 16;
+    header.writeUInt8(size >= 256 ? 0 : size, e); // width
+    header.writeUInt8(size >= 256 ? 0 : size, e + 1); // height
+    header.writeUInt8(0, e + 2); // palette
+    header.writeUInt8(0, e + 3); // reserved
+    header.writeUInt16LE(1, e + 4); // colour planes
+    header.writeUInt16LE(32, e + 6); // bits per pixel
+    header.writeUInt32LE(data.length, e + 8);
+    header.writeUInt32LE(offset, e + 12);
+    offset += data.length;
+  });
+  return Buffer.concat([header, ...images.map(([, d]) => d)]);
+}
+
 async function main(): Promise<void> {
   // Favicons
-  const favicon = iconSvg(40);
-  writeFileSync(join(pub, 'favicon.svg'), favicon);
-  await sharp(Buffer.from(iconSvg(32)), { density: 300 }).resize(32, 32).png().toFile(join(pub, 'favicon-32.png'));
-  await sharp(Buffer.from(iconSvg(180)), { density: 300 }).resize(180, 180).png().toFile(join(pub, 'apple-touch-icon.png'));
-  await sharp(Buffer.from(iconSvg(512)), { density: 300 }).resize(512, 512).png().toFile(join(pub, 'icon-512.png'));
+  const TAB = 1.16; // tighter padding for browser-tab sizes
+  writeFileSync(join(pub, 'favicon.svg'), iconSvg(40, TAB));
+  const png = (size: number, padding?: number) =>
+    sharp(Buffer.from(iconSvg(size, padding)), { density: 300 }).resize(size, size).png().toBuffer();
+  // favicon.ico: browsers and crawlers request it automatically, even when it isn't linked.
+  writeFileSync(join(pub, 'favicon.ico'), ico([[16, await png(16, TAB)], [32, await png(32, TAB)], [48, await png(48, TAB)]]));
+  writeFileSync(join(pub, 'apple-touch-icon.png'), await png(180));
+  writeFileSync(join(pub, 'icon-192.png'), await png(192));
+  writeFileSync(join(pub, 'icon-512.png'), await png(512));
 
   writeFileSync(
     join(pub, 'site.webmanifest'),
@@ -76,7 +106,7 @@ async function main(): Promise<void> {
         name: site.name,
         short_name: displayName(),
         icons: [
-          { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+          { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
         ],
         theme_color: '#101a33',
@@ -107,7 +137,7 @@ ${lines}
 ${hero}
 </svg>`;
   await sharp(Buffer.from(og)).png({ compressionLevel: 9 }).toFile(join(pub, 'og-image.png'));
-  console.log('Wrote favicon.svg, favicon-32.png, apple-touch-icon.png, icon-512.png, site.webmanifest, og-image.png');
+  console.log('Wrote favicon.svg, favicon.ico, apple-touch-icon.png, icon-192.png, icon-512.png, site.webmanifest, og-image.png');
 }
 
 main().catch((e) => {
