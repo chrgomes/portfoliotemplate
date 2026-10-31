@@ -11,12 +11,32 @@
   var root = document.documentElement;
   var media = window.matchMedia('(prefers-color-scheme: light)');
   var listeners = [];
-  var saved = null;
-  try {
-    saved = localStorage.getItem(KEY);
-  } catch (e) {
-    /* storage blocked: follow the system */
-  }
+  // Where the choice is kept: local storage normally. When the browser blocks storage
+  // (some private modes, strict privacy settings, embedded previews), fall back to the
+  // tab's window.name, which lasts while the visitor moves between pages in that tab.
+  var TAB_PREFIX = 'pf-theme:';
+  var readSaved = function () {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v) return v;
+    } catch (e) {
+      /* storage blocked */
+    }
+    return window.name.indexOf(TAB_PREFIX) === 0 ? window.name.slice(TAB_PREFIX.length) : null;
+  };
+  var writeSaved = function (value) {
+    var stored = false;
+    try {
+      if (value) localStorage.setItem(KEY, value);
+      else localStorage.removeItem(KEY);
+      stored = true;
+    } catch (e) {
+      /* storage blocked */
+    }
+    if (value && !stored) window.name = TAB_PREFIX + value;
+    else if (window.name.indexOf(TAB_PREFIX) === 0) window.name = '';
+  };
+  var saved = readSaved();
   if (saved !== 'light' && saved !== 'dark') saved = null;
 
   var system = function () {
@@ -50,12 +70,7 @@
     toggle: function () {
       var next = current() === 'dark' ? 'light' : 'dark';
       saved = next === system() ? null : next;
-      try {
-        if (saved) localStorage.setItem(KEY, saved);
-        else localStorage.removeItem(KEY);
-      } catch (e) {
-        /* the choice lasts for this page only */
-      }
+      writeSaved(saved);
       apply();
       return next;
     },

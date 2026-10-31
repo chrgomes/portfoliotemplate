@@ -31,7 +31,7 @@ export function privacySections(): PrivacySection[] {
     {
       title: 'What’s stored in your browser',
       paragraphs: [
-        'If you use the light/dark switch to pick the theme your device isn’t using, your choice is saved in your browser’s local storage under the name “theme”, so the site remembers it next time. It never leaves your device and isn’t sent to me. Switch back to match your device and it’s removed. You can also clear it at any time by clearing this site’s data in your browser settings.',
+        'If you use the light/dark switch to pick the theme your device isn’t using, your choice is saved in your browser’s local storage under the name “theme”, so the site remembers it next time. If your browser blocks storage, it’s kept only for the open tab instead. It never leaves your device and isn’t sent to me. Switch back to match your device and it’s removed. You can also clear it at any time by clearing this site’s data in your browser settings.',
       ],
     },
     {
