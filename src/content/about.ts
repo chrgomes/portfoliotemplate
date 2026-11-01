@@ -11,9 +11,11 @@ export const about: AboutContent = {
     'Studying marketing and SEO alongside software means I think about who a product is for and how they will find it — not just how it is built.',
   ],
   education: [
-    { title: 'Computer Systems Technology — Advanced Diploma', institution: '', year: '' },
-    { title: 'Digital marketing', institution: '', year: '' },
-    { title: 'SEO training', institution: '', year: '' },
+    { title: 'Computer Systems Technology', institution: '', year: '' },
+    { title: 'Digital Marketing', institution: '', year: '' },
+    { title: 'SEO', institution: '', year: '' },
+    { title: 'AI', institution: '', year: '' },
+    { title: 'Cybersecurity', institution: '', year: '' },
   ],
   // Add certifications only once they are earned, e.g. { title: 'CompTIA Security+', year: '2026' }
   certifications: [],
