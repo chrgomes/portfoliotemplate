@@ -1,6 +1,5 @@
 import { h, pts, r, type Pt, type SvgNode } from './svg';
 import type { Domain, PreviewKind } from '../content/types';
-import { LOGO_HEIGHT, LOGO_PATH, LOGO_WIDTH } from './logo';
 
 /* ==================================================================================
  * Hero: three isometric planes — interface, services, data — with requests flowing
@@ -423,20 +422,15 @@ export function processGlyph(kind: ProcessGlyph): SvgNode {
 }
 
 /* ==================================================================================
- * Brand mark — the CG logo (see logo.ts). `size` is its height in pixels.
+ * Brand mark: lowercase initials followed by a terminal cursor block, like a command
+ * prompt. Original to this site; initials come from site.config.ts.
  * ================================================================================ */
 
-export function monogram(_chars: string, size = 32): SvgNode {
+export function monogram(chars: string, size = 36): SvgNode {
   return h(
     'svg',
-    {
-      viewBox: `0 0 ${LOGO_WIDTH} ${LOGO_HEIGHT}`,
-      width: Math.round((size * LOGO_WIDTH) / LOGO_HEIGHT),
-      height: size,
-      class: 'monogram',
-      'aria-hidden': 'true',
-      focusable: 'false',
-    },
-    h('path', { d: LOGO_PATH, class: 'mg-logo' }),
+    { viewBox: '0 0 40 40', width: size, height: size, class: 'monogram', 'aria-hidden': 'true', focusable: 'false' },
+    h('text', { x: 3, y: 27, class: 'mg-text' }, chars.slice(0, 2).toLowerCase()),
+    h('rect', { x: 29, y: 12, width: 7, height: 16, rx: 1, class: 'mg-cursor' }),
   );
 }

@@ -11,8 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 import { site, copy } from '../src/content/site.config';
-import { displayName } from '../src/lib/helpers';
-import { LOGO_HEIGHT, LOGO_PATH, LOGO_WIDTH } from '../src/lib/logo';
+import { displayName, initials } from '../src/lib/helpers';
 import { toSvgString } from '../src/lib/svg';
 import { heroSystem } from '../src/lib/visuals';
 
@@ -51,17 +50,18 @@ function heroCss(): string {
 const esc = (s: string): string => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 /**
- * The CG logo centred on a dark rounded square, for favicons and app icons.
- * `padding` is the square's size relative to the logo; tab icons use less, so the
- * logo stays legible at 16-32 pixels.
+ * The brand mark (lowercase initials + cursor block) on a dark rounded square, for
+ * favicons and app icons. Uses the site's typeface where installed; the PNG/ICO files are
+ * rendered with it, and the SVG favicon falls back to a bold system sans.
  */
-function iconSvg(size: number, padding = 1.36): string {
-  const side = Math.round(LOGO_HEIGHT * padding);
-  const x = (side - LOGO_WIDTH) / 2;
-  const y = (side - LOGO_HEIGHT) / 2;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${side} ${side}" width="${size}" height="${size}">
-<rect width="${side}" height="${side}" rx="${Math.round(side * 0.22)}" fill="#101a33"/>
-<path transform="translate(${x} ${y})" d="${LOGO_PATH}" fill="#f4f6fa"/>
+const markSvg = (text: string, cursor: string) =>
+  `<text x="3" y="27" font-family="Inter Display, Inter, Arial, Helvetica, sans-serif" font-weight="700" font-size="21" letter-spacing="-1" fill="${text}">${esc(initials().toLowerCase())}</text>
+<rect x="29" y="12" width="7" height="16" rx="1" fill="${cursor}"/>`;
+
+function iconSvg(size: number): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="${size}" height="${size}">
+<rect width="40" height="40" rx="9" fill="#101a33"/>
+${markSvg('#f4f6fa', '#5b8cff')}
 </svg>`;
 }
 
@@ -89,12 +89,10 @@ function ico(images: [number, Buffer][]): Buffer {
 
 async function main(): Promise<void> {
   // Favicons
-  const TAB = 1.16; // tighter padding for browser-tab sizes
-  writeFileSync(join(pub, 'favicon.svg'), iconSvg(40, TAB));
-  const png = (size: number, padding?: number) =>
-    sharp(Buffer.from(iconSvg(size, padding)), { density: 300 }).resize(size, size).png().toBuffer();
+  writeFileSync(join(pub, 'favicon.svg'), iconSvg(40));
+  const png = (size: number) => sharp(Buffer.from(iconSvg(size)), { density: 300 }).resize(size, size).png().toBuffer();
   // favicon.ico: browsers and crawlers request it automatically, even when it isn't linked.
-  writeFileSync(join(pub, 'favicon.ico'), ico([[16, await png(16, TAB)], [32, await png(32, TAB)], [48, await png(48, TAB)]]));
+  writeFileSync(join(pub, 'favicon.ico'), ico([[16, await png(16)], [32, await png(32)], [48, await png(48)]]));
   writeFileSync(join(pub, 'apple-touch-icon.png'), await png(180));
   writeFileSync(join(pub, 'icon-192.png'), await png(192));
   writeFileSync(join(pub, 'icon-512.png'), await png(512));
@@ -129,7 +127,7 @@ async function main(): Promise<void> {
 <style>${heroCss()}</style>
 <rect width="1200" height="630" fill="#101a33"/>
 ${grid}
-<g transform="translate(72 60) scale(${(44 / LOGO_HEIGHT).toFixed(4)})"><path d="${LOGO_PATH}" fill="#f4f6fa"/></g>
+<g transform="translate(70 62)">${markSvg('#f4f6fa', '#5b8cff')}</g>
 <text x="128" y="92" font-family="Inter Display" font-weight="600" font-size="26" fill="#f4f6fa">${esc(site.name)}</text>
 ${lines}
 <text x="72" y="560" font-family="Inter" font-size="24" fill="#9aa5b5">${esc(site.role)}</text>

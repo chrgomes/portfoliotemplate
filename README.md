@@ -203,14 +203,14 @@ mean visitors always get the new version.
 ## Design notes
 
 - Light and dark themes. The site follows the visitor's system setting; the nav toggle switches to the other theme and remembers it until it matches the system again (`public/theme.js`). The approach section is always the inverse of the page. A faint column grid sits behind the page, and Inter / Inter Display are self-hosted (no Google Fonts request).
-- The brand mark is `src/lib/logo.ts`, a vector path. Replace it and run `npm run assets` to update the favicons and social image.
+- The brand mark is your lowercase initials followed by a blue cursor block, like a command prompt (`monogram()` in `src/lib/visuals.ts`), an original design in the site's own typeface. Initials come from `site.config.ts` (`monogram` overrides them). After changing them, run `npm run assets` to update the favicons and social image.
 
 ## Icons, sitemap and robots.txt
 
-- **Icons** (`npm run assets`, from the CG logo): `favicon.ico` (16, 32 and 48 px, which browsers and
+- **Icons** (`npm run assets`, from the brand mark): `favicon.ico` (16, 32 and 48 px, which browsers and
   crawlers request automatically), `favicon.svg` for modern browsers, `apple-touch-icon.png` for
   iPhone home screens, and `icon-192.png` / `icon-512.png` for Android via `site.webmanifest`.
-  Tab-sized icons use tighter padding so the logo stays legible at 16 px.
+  The icon version uses slightly heavier lines and letters so it stays legible at 16 px.
 - **`sitemap.xml`** lists the home page, every featured case study and the privacy notice, built from
   `projects.ts`. It has no `<lastmod>` dates on purpose: a build date on every page would be
   inaccurate, and search engines ignore dates they can't trust.

@@ -167,12 +167,26 @@
   font-size: 1.05rem;
   letter-spacing: -0.01em;
 }
-.monogram .mg-logo {
+.monogram .mg-text {
   fill: var(--c-text);
-  transition: fill var(--dur-1) ease;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: -1px;
 }
-.brand:hover .mg-logo {
+.monogram .mg-cursor {
   fill: var(--c-blue);
+}
+@media (prefers-reduced-motion: no-preference) {
+  /* The cursor blinks while you hover the name, like a waiting prompt. */
+  .brand:hover .mg-cursor {
+    animation: mg-blink 1s steps(1, end) infinite;
+  }
+}
+@keyframes mg-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 .nav-links {
