@@ -82,3 +82,33 @@ test('site URL has no trailing slash and contact links are well formed', () => {
   if (site.contact.email) assert.match(site.contact.email, /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   for (const url of [site.contact.github, site.contact.linkedin]) if (url) assert.match(url, /^https:\/\//);
 });
+
+test('no API keys or secrets in anything the browser receives', async () => {
+  const { readdirSync, readFileSync, statSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  // Everything under these folders ends up in the visitor's browser or the public repo.
+  const roots = ['src', 'public', 'tools/static/client'];
+  const patterns: [string, RegExp][] = [
+    ['OpenAI-style key', /\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}/],
+    ['Anthropic key', /\bsk-ant-[A-Za-z0-9_-]{20,}/],
+    ['AWS access key', /\bAKIA[0-9A-Z]{16}\b/],
+    ['Google API key', /\bAIza[0-9A-Za-z_-]{30,}/],
+    ['GitHub token', /\bgh[pousr]_[A-Za-z0-9]{30,}/],
+    ['Slack token', /\bxox[abprs]-[A-Za-z0-9-]{10,}/],
+    ['Stripe secret key', /\b[rs]k_(?:live|test)_[A-Za-z0-9]{16,}/],
+    ['Resend API key', /\bre_[A-Za-z0-9_]{20,}/],
+    ['private key block', /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
+    ['hard-coded secret', /\b(?:api[_-]?key|secret|client[_-]?secret|password|access[_-]?token)\b\s*[:=]\s*['"`][^'"`\s]{12,}['"`]/i],
+  ];
+  const walk = (dir: string): string[] =>
+    readdirSync(dir).flatMap((f) => {
+      const p = join(dir, f);
+      return statSync(p).isDirectory() ? walk(p) : /\.(ts|js|mjs|html|json|css|webmanifest|txt|xml|svg)$/.test(f) ? [p] : [];
+    });
+  const hits: string[] = [];
+  for (const file of roots.flatMap(walk)) {
+    const text = readFileSync(file, 'utf8');
+    for (const [label, re] of patterns) if (re.test(text)) hits.push(`${file}: looks like a ${label}`);
+  }
+  assert.deepEqual(hits, [], 'Secrets belong in contact-config.php on the server, never in front-end files');
+});

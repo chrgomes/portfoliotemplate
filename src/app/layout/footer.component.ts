@@ -26,7 +26,7 @@ import { IconComponent } from '../shared/icon.component';
             @if (contact.email) {
               <li><a [href]="'mailto:' + contact.email"><pf-icon name="mail" />Email</a></li>
             }
-            <li><a routerLink="/privacy">Privacy</a></li>
+            <li><a routerLink="/privacy" data-privacy-link>Privacy</a></li>
         </ul>
         <button class="to-top" type="button" (click)="toTop()">Back to top <pf-icon name="arrow-up" /></button>
       </div>

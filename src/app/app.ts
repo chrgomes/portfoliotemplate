@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './layout/nav.component';
 import { FooterComponent } from './layout/footer.component';
 import { CursorComponent } from './layout/cursor.component';
+import { PrivacyDialogComponent } from './layout/privacy-dialog.component';
 
 @Component({
   selector: 'pf-root',
-  imports: [RouterOutlet, NavComponent, FooterComponent, CursorComponent],
+  imports: [RouterOutlet, NavComponent, FooterComponent, CursorComponent, PrivacyDialogComponent],
   template: `
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="page-grid" aria-hidden="true"><div class="container"></div></div>
@@ -16,6 +17,7 @@ import { CursorComponent } from './layout/cursor.component';
     </main>
     <pf-footer />
     <pf-cursor />
+    <pf-privacy-dialog />
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

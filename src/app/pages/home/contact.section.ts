@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, afterNextRender, inject, signal } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators, type AbstractControl } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { site, copy } from '../../../content/site.config';
 import { IconComponent } from '../../shared/icon.component';
 import { RevealDirective } from '../../shared/reveal.directive';
@@ -12,7 +13,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 @Component({
   selector: 'pf-contact',
-  imports: [ReactiveFormsModule, IconComponent, RevealDirective],
+  imports: [ReactiveFormsModule, RouterLink, IconComponent, RevealDirective],
   template: `
     <section class="section contact" id="contact" aria-labelledby="contact-title">
       <div class="container contact-grid">
@@ -79,7 +80,10 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
               This form needs JavaScript for its spam check.
               @if (c.email) { You can email me at {{ c.email }} instead. } @else { Turn JavaScript on to send a message. }
             </p>
-            <p class="form-note">Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.</p>
+            <p class="form-note">
+              Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.
+              <a routerLink="/privacy" data-privacy-link>Privacy notice</a>
+            </p>
           </form>
         }
       </div>

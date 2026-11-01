@@ -464,6 +464,78 @@
     themeBtn.addEventListener('click', function () { window.portfolioTheme.toggle(); });
   }
 
+  /* ---------- Privacy notice in a modal ----------
+   * Links marked data-privacy-link open the notice in a dialog instead of leaving the
+   * page. The text is fetched from /privacy/ on first use, so it lives on one page only.
+   * The link still works as a normal link (new tab, no JavaScript, older browsers). */
+  (function () {
+    var dlg = $('#privacy-dialog');
+    if (!dlg || typeof dlg.showModal !== 'function' || !window.fetch || !window.DOMParser) return;
+    var body = $('.pd-body', dlg);
+    var updated = $('.pd-updated', dlg);
+    var loading = null;
+    var onPrivacyPage = /\/privacy\/(index\.html)?$/.test(window.location.pathname);
+
+    var load = function (url) {
+      if (loading) return loading;
+      loading = fetch(url, { headers: { Accept: 'text/html' } })
+        .then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.text();
+        })
+        .then(function (html) {
+          var page = new DOMParser().parseFromString(html, 'text/html');
+          var src = page.querySelector('.legal-body');
+          if (!src) throw new Error('No notice found');
+          var date = page.querySelector('.legal-updated');
+          if (date) updated.textContent = date.textContent;
+          body.textContent = '';
+          Array.prototype.forEach.call(src.children, function (section) {
+            var node = document.importNode(section, true);
+            // Inside the dialog the title is the h2, so section headings become h3.
+            $$('h2', node).forEach(function (h) {
+              var h3 = document.createElement('h3');
+              h3.id = 'pd-' + h.id;
+              h3.textContent = h.textContent;
+              h.parentNode.replaceChild(h3, h);
+            });
+            var labelledBy = node.getAttribute('aria-labelledby');
+            if (labelledBy) node.setAttribute('aria-labelledby', 'pd-' + labelledBy);
+            body.appendChild(node);
+          });
+        });
+      loading.catch(function () { loading = null; });
+      return loading;
+    };
+
+    // Fetch ahead of the click, so the notice is usually ready the moment it opens.
+    var prefetch = function (e) {
+      var a = e.target.closest && e.target.closest('a[data-privacy-link]');
+      if (a && !onPrivacyPage) load(a.href).catch(function () {});
+    };
+    doc.addEventListener('pointerover', prefetch);
+    doc.addEventListener('focusin', prefetch);
+
+    doc.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a[data-privacy-link]');
+      if (!a || onPrivacyPage || e.defaultPrevented) return;
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; // new tab etc.
+      e.preventDefault();
+      dlg.showModal();
+      root.classList.add('pd-open');
+      body.scrollTop = 0;
+      load(a.href).catch(function () {
+        // Couldn't fetch it: go to the page instead.
+        window.location.href = a.href;
+      });
+    });
+
+    $('[data-pd-close]', dlg).addEventListener('click', function () { dlg.close(); });
+    // A click on the dimmed area outside the box lands on the dialog element itself.
+    dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('close', function () { root.classList.remove('pd-open'); });
+  })();
+
   /* ---------- 404: show the address that wasn't found ---------- */
   var requested = $('[data-requested-path]');
   if (requested) {

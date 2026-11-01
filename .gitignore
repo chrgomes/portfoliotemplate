@@ -13,3 +13,9 @@ contact-data/
 # Generated at build time from site.config.ts
 public/robots.txt
 public/sitemap.xml
+# Environment files hold secrets (API keys, passwords). Never commit them.
+.env
+.env.*
+!.env.example
+*.pem
+*.key

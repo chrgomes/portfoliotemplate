@@ -89,6 +89,7 @@ ${body}
 </main>
 ${footer(o)}
 <div class="cursor-ring" aria-hidden="true"></div>
+${privacyDialog(o)}
 </body>
 </html>
 `;
@@ -132,7 +133,7 @@ function footer(o: RenderOptions): string {
     c.github ? `<li><a href="${esc(c.github)}" rel="me noopener" target="_blank">${ic('github')}GitHub</a></li>` : '',
     c.linkedin ? `<li><a href="${esc(c.linkedin)}" rel="me noopener" target="_blank">${ic('linkedin')}LinkedIn</a></li>` : '',
     c.email ? `<li><a href="mailto:${esc(c.email)}">${ic('mail')}Email</a></li>` : '',
-    `<li><a href="${link(o, '/privacy/')}">Privacy</a></li>`,
+    `<li><a href="${link(o, '/privacy/')}" data-privacy-link>Privacy</a></li>`,
   ].join('');
   const year = new Date().getFullYear();
   return `<footer class="site-footer">
@@ -373,7 +374,7 @@ function contact(o: RenderOptions): string {
   <button class="btn btn--primary" type="submit"${o.preview ? ' disabled' : ''}>${ic('send')}<span>Send message</span></button>
   <p class="form-status" role="status" aria-live="polite"></p>
   <p class="form-note form-note--warn form-note--nojs">This form needs JavaScript for its spam check.${c.email ? ` You can email me at ${esc(c.email)} instead.` : ' Turn JavaScript on to send a message.'}</p>
-  <p class="form-note">${o.preview ? 'Preview only: the form sends through contact.php once the site is on your GoDaddy hosting.' : 'Your details are used only to reply to you. Spam protection runs in your browser, with no tracking.'}</p>
+  <p class="form-note">${o.preview ? 'Preview only: the form sends through contact.php once the site is on your GoDaddy hosting.' : `Your details are used only to reply to you. Spam protection runs in your browser, with no tracking. <a href="${link(o, '/privacy/')}" data-privacy-link>Privacy notice</a>`}</p>
 </form>`
     : '';
 
@@ -504,6 +505,26 @@ export function privacy(o: RenderOptions): string {
     <div class="legal-body">${sections}</div>
   </div>
 </article>`;
+}
+
+/**
+ * Empty shell for the privacy modal. site.js fills it from /privacy/ the first time it
+ * opens, so the notice's text lives on one page only (no duplicate content for search).
+ */
+function privacyDialog(o: RenderOptions): string {
+  return `<dialog class="privacy-dialog" id="privacy-dialog" aria-labelledby="pd-title">
+  <div class="pd-inner">
+    <header class="pd-head">
+      <div>
+        <h2 id="pd-title">Privacy notice</h2>
+        <p class="pd-updated mono"></p>
+      </div>
+      <button class="pd-close" type="button" aria-label="Close privacy notice" data-pd-close>${ic('x')}</button>
+    </header>
+    <div class="pd-body legal-body" tabindex="0"><p class="pd-loading">Loading…</p></div>
+    <footer class="pd-foot"><a class="text-link" href="${link(o, '/privacy/')}">Open as a full page</a></footer>
+  </div>
+</dialog>`;
 }
 
 const slugify = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');

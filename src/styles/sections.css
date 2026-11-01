@@ -957,6 +957,13 @@
   color: var(--c-subtle);
   font-size: var(--t-xs);
 }
+.form-note a {
+  color: var(--c-muted);
+  text-underline-offset: 0.2em;
+}
+.form-note a:hover {
+  color: var(--c-text);
+}
 .spinner {
   width: 14px;
   height: 14px;
