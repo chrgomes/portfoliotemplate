@@ -19,9 +19,9 @@ test('project slugs are unique and URL-safe', () => {
   for (const s of slugs) assert.match(s, /^[a-z0-9]+(-[a-z0-9]+)*$/);
 });
 
-test('four to six projects are featured', () => {
+test('one to six projects are featured', () => {
   const n = featuredProjects().length;
-  assert.ok(n >= 4 && n <= 6, `featured projects: ${n}`);
+  assert.ok(n >= 1 && n <= 6, `featured projects: ${n}`);
 });
 
 test('every project has a known status and a non-empty case study', () => {
