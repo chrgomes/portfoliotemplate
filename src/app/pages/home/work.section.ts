@@ -4,12 +4,10 @@ import { copy } from '../../../content/site.config';
 import { featuredProjects, statusLabel } from '../../../content/projects';
 import type { Project } from '../../../content/types';
 import { projectPreview } from '../../../lib/visuals';
+import { cardWidth } from '../../../lib/helpers';
 import { SvgComponent } from '../../shared/svg.component';
 import { IconComponent } from '../../shared/icon.component';
 import { RevealDirective } from '../../shared/reveal.directive';
-
-/** Card widths in a 12-column grid, giving the gallery an editorial rhythm. */
-const WIDTHS = ['w7', 'w5', 'w5', 'w7', 'w12', 'w12'];
 
 @Component({
   selector: 'pf-work',
@@ -77,7 +75,7 @@ export class WorkSection {
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   protected width(i: number): string {
-    return WIDTHS[i] ?? 'w12';
+    return cardWidth(i, this.projects.length);
   }
 
   protected preview(p: Project) {

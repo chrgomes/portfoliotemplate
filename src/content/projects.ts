@@ -211,6 +211,38 @@ export const projects: Project[] = [
       next: ['Approval workflow notifications', 'Bulk scheduling from a spreadsheet'],
     },
   },
+  {
+    slug: 'ecommerce-parcel-shipping-platform',
+    title: 'Ecommerce parcel shipping platform',
+    category: 'Shipping platform',
+    summary:
+      'A website where customers get a quote, book and pay for parcel shipping, then track their parcel through to delivery.',
+    domain: 'product',
+    status: 'in-development',
+    tech: ['Angular', 'TypeScript', 'FastAPI', 'MySQL'],
+    featured: true,
+    preview: 'parcel',
+    repoUrl: null,
+    liveUrl: null,
+    caseStudy: {
+      overview:
+        'An ecommerce shipping platform where customers book and pay for parcel shipping online, from the first quote to tracking the delivery.',
+      problem:
+        'Customers sending a parcel want to see the price, book the shipment and pay in one place, then know where their parcel is without having to call anyone.',
+      users: ['Customers booking and paying for parcel shipments', 'Administrators managing bookings'],
+      objectives: [],
+      constraints: [],
+      features: ['Shipping quotes', 'Online booking and checkout', 'Shipping label printing', 'Parcel tracking', 'Admin dashboard'],
+      decisions: [],
+      security: [],
+      challenges: [],
+      testing: [],
+      statusNote:
+        'In development. Carrier and payment service integrations are still being built, and the feature set may change.',
+      lessons: [],
+      next: ['Carrier integration', 'Payment service integration'],
+    },
+  },
 
   /* ------------------------------------------------------------------------------
    * TEMPLATE — not shown (featured: false). Copy this block to add a project.

@@ -13,7 +13,7 @@ export type ProjectStatus = 'completed' | 'in-development' | 'prototype' | 'conc
 export type Domain = 'product' | 'data' | 'security';
 
 /** Which generated preview to draw for a project when there is no real screenshot. */
-export type PreviewKind = 'logistics' | 'social' | 'ai' | 'security' | 'commerce' | 'automation';
+export type PreviewKind = 'logistics' | 'social' | 'ai' | 'security' | 'commerce' | 'automation' | 'parcel';
 
 export interface Link {
   label: string;
@@ -128,7 +128,7 @@ export interface Project {
   domain: Domain;
   status: ProjectStatus;
   tech: string[];
-  /** Shown on the home page when true. Keep four to six featured. */
+  /** Shown on the home page when true. Keep up to six featured. */
   featured: boolean;
   preview: PreviewKind;
   /**

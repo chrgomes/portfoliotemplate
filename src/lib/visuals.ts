@@ -350,7 +350,30 @@ function commerce(): SvgNode {
   return frame('store', ...out);
 }
 
-const PREVIEWS: Record<PreviewKind, () => SvgNode> = { logistics, social, ai, security, automation, commerce };
+/** Parcel shipping: a quote-and-book form beside a tracking timeline. */
+function parcel(): SvgNode {
+  const out: SvgNode[] = [rect(20, 56, 330, 328, 'pv-panel', 8), text(36, 80, 'Book a parcel', 'pv-label')];
+  ['From', 'To', 'Weight'].forEach((label, i) => {
+    const y = 98 + i * 62;
+    out.push(text(36, y + 12, label, 'pv-label'), rect(36, y + 20, 298, 30, 'pv-cell', 6), bar(48, y + 35, i === 2 ? 40 : 120));
+  });
+  out.push(h('line', { x1: 36, y1: 296, x2: 334, y2: 296, class: 'pv-rule' }));
+  out.push(text(36, 320, 'Quote', 'pv-label'), bar(270, 316, 64, 'pv-ink pv-ink--strong'));
+  out.push(rect(36, 336, 298, 34, 'pv-button pv-button--product', 17));
+
+  out.push(rect(366, 56, 254, 328, 'pv-panel', 8), text(382, 80, 'Tracking', 'pv-label'));
+  const steps = ['Booked', 'Picked up', 'In transit', 'Delivered'];
+  const reached = 3;
+  out.push(h('line', { x1: 396, y1: 116, x2: 396, y2: 116 + 3 * 72, class: 'pv-rule' }));
+  steps.forEach((label, i) => {
+    const y = 116 + i * 72;
+    out.push(h('circle', { cx: 396, cy: y, r: 9, class: i < reached ? 'pv-fill pv-fill--product' : 'pv-fill' }));
+    out.push(text(418, y + 4, label, 'pv-label'), bar(418, y + 22, i < reached ? 120 - i * 18 : 70));
+  });
+  return frame('shipping', ...out);
+}
+
+const PREVIEWS: Record<PreviewKind, () => SvgNode> = { logistics, social, ai, security, automation, commerce, parcel };
 
 export function projectPreview(kind: PreviewKind, title: string): SvgNode {
   return h(

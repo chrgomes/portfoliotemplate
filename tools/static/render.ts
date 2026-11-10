@@ -21,6 +21,7 @@ import {
   absoluteUrl,
   nextProject,
   type PageMeta,
+  cardWidth,
 } from '../../src/lib/helpers';
 
 export interface RenderOptions {
@@ -184,9 +185,8 @@ function hero(o: RenderOptions): string {
 </section>`;
 }
 
-const CARD_WIDTHS = ['w7', 'w5', 'w5', 'w7', 'w12', 'w12'];
 
-function projectCard(o: RenderOptions, p: Project, i: number): string {
+function projectCard(o: RenderOptions, p: Project, i: number, count: number): string {
   const href = link(o, projectPath(p));
   const media = p.image
     ? `<img src="${link(o, p.image.src)}" alt="${esc(p.image.alt)}" width="${p.image.width}" height="${p.image.height}" loading="lazy" decoding="async">`
@@ -195,7 +195,7 @@ function projectCard(o: RenderOptions, p: Project, i: number): string {
     p.repoUrl ? `<a class="text-link ext" href="${esc(p.repoUrl)}" target="_blank" rel="noopener">${ic('github')}Source</a>` : '',
     p.liveUrl ? `<a class="text-link ext" href="${esc(p.liveUrl)}" target="_blank" rel="noopener">Live demo ${ic('arrow-up-right')}</a>` : '',
   ].join('');
-  return `<article class="card card--${CARD_WIDTHS[i] ?? 'w12'} reveal" data-domain="${p.domain}" data-cursor="Read">
+  return `<article class="card card--${cardWidth(i, count)} reveal" data-domain="${p.domain}" data-cursor="Read">
   <div class="card-media">${media}</div>
   <div class="card-body">
     <div class="card-meta"><span class="mono">${esc(p.category)}</span><span class="status status--${p.status}">${statusLabel[p.status]}</span></div>
@@ -218,7 +218,7 @@ function work(o: RenderOptions): string {
       <p>${esc(copy.workLead)}</p>
     </div>
     <div class="work-grid">
-      ${featuredProjects().map((p, i) => projectCard(o, p, i)).join('\n')}
+      ${featuredProjects().map((p, i, all) => projectCard(o, p, i, all.length)).join('\n')}
     </div>
   </div>
 </section>`;

@@ -103,3 +103,14 @@ export function nextProject(p: Project): Project {
 }
 
 export { projects };
+
+/**
+ * Card width on the home page's 12-column work grid: two cards per row (7+5, then 5+7),
+ * then full-width cards. A card that would sit alone in a paired row spans the full width.
+ */
+const CARD_WIDTHS = ['w7', 'w5', 'w5', 'w7'];
+export function cardWidth(i: number, count: number): string {
+  if (i >= CARD_WIDTHS.length) return 'w12';
+  if (i === count - 1 && i % 2 === 0) return 'w12';
+  return CARD_WIDTHS[i];
+}
