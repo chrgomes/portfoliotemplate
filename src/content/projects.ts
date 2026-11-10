@@ -243,6 +243,35 @@ export const projects: Project[] = [
       next: ['Carrier integration', 'Payment service integration'],
     },
   },
+  {
+    slug: 'baking-ecommerce-website',
+    title: 'Baking ecommerce website',
+    category: 'Ecommerce',
+    summary: 'An online bakery where customers browse the menu, order and pay, built for the bakery owner to run sales online.',
+    domain: 'product',
+    status: 'in-development',
+    tech: ['Angular', 'TypeScript', 'FastAPI', 'MySQL'],
+    featured: true,
+    preview: 'commerce',
+    repoUrl: null,
+    liveUrl: null,
+    caseStudy: {
+      overview:
+        'An ecommerce website for a bakery, where customers order and pay online and the owner manages products and orders in one place.',
+      problem: 'A bakery owner needs a way to take orders and payments online, and keep track of them, without handling everything by phone or in person.',
+      users: ['Bakery owners selling online', 'Customers ordering and paying online'],
+      objectives: [],
+      constraints: [],
+      features: ['Product menu', 'Cart and checkout', 'Custom cake orders', 'Pickup and delivery scheduling', 'Admin area for products and orders'],
+      decisions: [],
+      security: [],
+      challenges: [],
+      testing: [],
+      statusNote: 'In development. The feature set may change as the build progresses.',
+      lessons: [],
+      next: [],
+    },
+  },
 
   /* ------------------------------------------------------------------------------
    * TEMPLATE — not shown (featured: false). Copy this block to add a project.
